@@ -1,0 +1,13 @@
+[package]
+name = "list-fn"
+version = "0.2.2"
+authors = ["natfoam"]
+edition = "2018"
+description = "A generic lazy list"
+license = "Apache-2.0"
+repository = "https://github.com/natfoam/lib"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+take_mut = "0.2.2"
