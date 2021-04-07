@@ -1,5 +1,6 @@
 [workspace]
 
 members = [
-    "list-fn"
+    "list-fn",
+    "uints"
 ]
