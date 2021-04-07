@@ -1,9 +1,9 @@
 [package]
 name = "uints"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["natfoam"]
 edition = "2018"
-description = "UInt properties"
+description = "Unsigned Integer Properties"
 license = "Apache-2.0"
 repository = "https://github.com/natfoam/lib"
 
