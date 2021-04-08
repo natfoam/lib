@@ -13,7 +13,13 @@ impl<L: ListFn> ListFn for Take<L> {
             List::End(())
         } else {
             match self.input.list() {
-                List::Some(first, input) => List::Some(first, Take { input, count: self.count - 1 }),
+                List::Some(first, input) => List::Some(
+                    first,
+                    Take {
+                        input,
+                        count: self.count - 1,
+                    },
+                ),
                 List::End(_) => List::End(()),
             }
         }
@@ -21,7 +27,9 @@ impl<L: ListFn> ListFn for Take<L> {
 }
 
 pub trait TakeEx: ListFn {
-    fn take(self, count: usize) -> Take<Self> { Take { input: self, count }}
+    fn take(self, count: usize) -> Take<Self> {
+        Take { input: self, count }
+    }
 }
 
 impl<L: ListFn> TakeEx for L {}
