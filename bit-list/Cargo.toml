@@ -1,6 +1,6 @@
 [package]
 name = "bit-list"
-version = "0.2.1"
+version = "0.2.2"
 authors = ["natfoam"]
 edition = "2018"
 description = "A lazy list of bits"
