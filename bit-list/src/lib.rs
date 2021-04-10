@@ -64,7 +64,7 @@ impl<L: ListFn> BitsEx for L
 #[cfg(test)]
 mod tests {
     use super::*;
-    use list_fn::Collect;
+    use list_fn::{Collect, IntoIter};
     #[test]
     fn it_works() {
         let a: &[u8] = &[1, 2];
@@ -83,5 +83,19 @@ mod tests {
                 false, false, false, false
             )
         );
+        {
+            let mut r = Vec::new();
+            let v: Vec<u8> = vec![3, 4];
+            for elem in v.into_iter().lsb0().iter() {
+                r.push(elem)
+            }
+            assert_eq!(
+                r,
+                vec!(
+                    true, true, false, false, false, false, false, false, false, false, true, false,
+                    false, false, false, false
+                )
+            );
+        }
     }
 }
