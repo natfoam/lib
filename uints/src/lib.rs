@@ -1,7 +1,7 @@
 use std::fmt::Debug;
 use std::ops::{
-    Add, AddAssign, BitAnd, BitAndAssign, BitOr, BitOrAssign, Div, DivAssign, Mul, MulAssign, Rem, Shl, ShlAssign, Shr,
-    ShrAssign, Sub,
+    Add, AddAssign, BitAnd, BitAndAssign, BitOr, BitOrAssign, Div, DivAssign, Mul, MulAssign, Rem,
+    Shl, ShlAssign, Shr, ShrAssign, Sub,
 };
 
 pub trait Common: Default + PartialOrd + Debug {

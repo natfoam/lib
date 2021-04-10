@@ -1,5 +1,5 @@
+use list_fn::{Empty, FlatScan, FlatScanEx, FlatScanListFn, List, ListFn};
 use std::marker::PhantomData;
-use list_fn::{List, ListFn, FlatScan, FlatScanListFn, FlatScanEx, Empty};
 use uints::UInt;
 
 pub struct Lsb0<T: UInt> {
@@ -37,7 +37,7 @@ pub struct Lsb0ListFn<T: UInt>(PhantomData<T>);
 
 impl<T: UInt> Default for Lsb0ListFn<T> {
     fn default() -> Self {
-        Self ( Default::default() )
+        Self(Default::default())
     }
 }
 
@@ -45,21 +45,24 @@ impl<T: UInt> FlatScan for Lsb0ListFn<T> {
     type InputItem = T;
     type ItemList = Lsb0<T>;
     type EndList = Empty<bool>;
-    fn item(self, item: T) -> Lsb0<T> { Lsb0::new(item) }
-    fn end(self) -> Empty<bool> { Default::default() }
+    fn item(self, item: T) -> Lsb0<T> {
+        Lsb0::new(item)
+    }
+    fn end(self) -> Empty<bool> {
+        Default::default()
+    }
 }
 
 pub trait BitsEx: ListFn
-    where Self::Item: UInt
+where
+    Self::Item: UInt,
 {
     fn lsb0(self) -> FlatScanListFn<Self, Lsb0ListFn<Self::Item>> {
         self.flat_scan(Default::default())
     }
 }
 
-impl<L: ListFn> BitsEx for L
-    where Self::Item: UInt
-{}
+impl<L: ListFn> BitsEx for L where Self::Item: UInt {}
 
 #[cfg(test)]
 mod tests {
@@ -92,8 +95,8 @@ mod tests {
             assert_eq!(
                 r,
                 vec!(
-                    true, true, false, false, false, false, false, false, false, false, true, false,
-                    false, false, false, false
+                    true, true, false, false, false, false, false, false, false, false, true,
+                    false, false, false, false, false
                 )
             );
         }

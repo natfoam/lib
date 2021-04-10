@@ -39,7 +39,7 @@ impl<I: ListFn, F: FlatScan<InputItem = I::Item>> ListFn for FlatScanListFn<I, F
                         List::Some(first, next) => List::Some(first, FlatScanListFn::EndList(next)),
                         List::End(end) => List::End(FlatScanListFn::End(end)),
                     }
-                },
+                }
                 FlatScanListFn::End(end) => FlatScanListFn::End(end),
             }
         }
@@ -47,7 +47,10 @@ impl<I: ListFn, F: FlatScan<InputItem = I::Item>> ListFn for FlatScanListFn<I, F
 }
 
 pub trait FlatScanEx: ListFn {
-    fn flat_scan<F: FlatScan<InputItem = Self::Item>>(self, flat_scan: F) -> FlatScanListFn<Self, F> {
+    fn flat_scan<F: FlatScan<InputItem = Self::Item>>(
+        self,
+        flat_scan: F,
+    ) -> FlatScanListFn<Self, F> {
         FlatScanListFn::Begin {
             input: self,
             flat_scan,
