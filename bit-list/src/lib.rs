@@ -67,23 +67,21 @@ mod tests {
     use list_fn::Collect;
     #[test]
     fn it_works() {
-        fn it_works() {
-            let a: &[u8] = &[1, 2];
-            assert_eq!(
-                a.iter().cloned().lsb0().collect(),
-                vec!(
-                    true, false, false, false, false, false, false, false, false, true, false, false,
-                    false, false, false, false
-                )
-            );
-            let v: Vec<u8> = vec![3, 4];
-            assert_eq!(
-                v.into_iter().lsb0().collect(),
-                vec!(
-                    true, true, false, false, false, false, false, false, false, false, true, false,
-                    false, false, false, false
-                )
-            );
-        }
+        let a: &[u8] = &[1, 2];
+        assert_eq!(
+            a.iter().cloned().lsb0().collect(),
+            vec!(
+                true, false, false, false, false, false, false, false, false, true, false, false,
+                false, false, false, false
+            )
+        );
+        let v: Vec<u8> = vec![3, 4];
+        assert_eq!(
+            v.into_iter().lsb0().collect(),
+            vec!(
+                true, true, false, false, false, false, false, false, false, false, true, false,
+                false, false, false, false
+            )
+        );
     }
 }
