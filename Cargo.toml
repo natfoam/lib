@@ -2,5 +2,6 @@
 
 members = [
     "list-fn",
-    "uints"
+    "uints",
+    "bit-list"
 ]

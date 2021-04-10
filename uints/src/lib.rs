@@ -1,6 +1,6 @@
 use std::fmt::Debug;
 use std::ops::{
-    Add, AddAssign, BitOr, BitOrAssign, Div, DivAssign, Mul, MulAssign, Rem, Shl, ShlAssign, Shr,
+    Add, AddAssign, BitAnd, BitAndAssign, BitOr, BitOrAssign, Div, DivAssign, Mul, MulAssign, Rem, Shl, ShlAssign, Shr,
     ShrAssign, Sub,
 };
 
@@ -35,6 +35,8 @@ pub trait UInt:
     + ShrAssign<u8>
     + BitOr<Output = Self>
     + BitOrAssign
+    + BitAnd<Output = Self>
+    + BitAndAssign
 {
     fn remove(self, i: u8) -> Self {
         if i < Self::BITS {
