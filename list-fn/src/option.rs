@@ -1,5 +1,6 @@
 use super::*;
 
+/// Option as a list.
 impl<T> ListFn for Option<T> {
     type Item = T;
     type End = Self;

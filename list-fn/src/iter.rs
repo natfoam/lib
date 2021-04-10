@@ -5,6 +5,7 @@ use take_mut::take;
 impl<I: Iterator> ListFn for &mut I {
     type Item = I::Item;
     type End = Self;
+    /// Converts an iterator into a list.
     fn list(self) -> List<Self> {
         match self.next() {
             Option::None => List::End(self),
@@ -30,10 +31,13 @@ impl<S: ListFn<End = S>> Iterator for ListIterator<S> {
     }
 }
 
-pub trait IterEx: ListFn<End = Self> {
+/// Note: we can't use the standard std::iter::IntoIterator because it has
+/// a conflicting implementation.
+pub trait IntoIter: ListFn<End = Self> {
+    /// Converts a list to an iterator.
     fn iter(self) -> ListIterator<Self> {
         ListIterator(self)
     }
 }
 
-impl<S: ListFn<End = Self>> IterEx for S {}
+impl<S: ListFn<End = Self>> IntoIter for S {}

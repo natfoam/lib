@@ -77,4 +77,13 @@ mod tests {
             assert_eq!(v, Vec::new());
         }
     }
+
+    #[test]
+    fn foreach() {
+        let mut v = Vec::new();
+        for elem in Range10(2).iter() {
+            v.push(elem);
+        }
+        assert_eq!(v, vec![2, 3, 4, 5, 6, 7, 8, 9])
+    }
 }
