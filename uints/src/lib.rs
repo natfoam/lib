@@ -8,7 +8,8 @@ pub trait Common: Default + PartialOrd + Debug {
     const ZERO: Self;
     const ONE: Self;
     const MAX: Self;
-    const BITS: u8;
+    const BYTES: u8;
+    const BITS: u8 = Self::BYTES * 8;
     type Array;
     fn leading_zeros(&self) -> u8;
     fn trailing_zeros(&self) -> u8;
@@ -68,7 +69,7 @@ impl Common for u8 {
     const ZERO: u8 = 0;
     const ONE: u8 = 1;
     const MAX: u8 = u8::MAX;
-    const BITS: u8 = 8;
+    const BYTES: u8 = 1;
     type Array = [u8; 1];
     fn leading_zeros(&self) -> u8 {
         u8::leading_zeros(*self) as u8
@@ -106,7 +107,7 @@ impl Common for u32 {
     const ZERO: u32 = 0;
     const ONE: u32 = 1;
     const MAX: u32 = u32::MAX;
-    const BITS: u8 = 32;
+    const BYTES: u8 = 4;
     type Array = [u8; 4];
     fn leading_zeros(&self) -> u8 {
         u32::leading_zeros(*self) as u8
@@ -137,7 +138,7 @@ impl Common for u64 {
     const ZERO: u64 = 0;
     const ONE: u64 = 1;
     const MAX: u64 = u64::MAX;
-    const BITS: u8 = 64;
+    const BYTES: u8 = 8;
     type Array = [u8; 8];
     fn leading_zeros(&self) -> u8 {
         u64::leading_zeros(*self) as u8
@@ -170,7 +171,7 @@ impl Common for u128 {
     const ZERO: u128 = 0;
     const ONE: u128 = 1;
     const MAX: u128 = u128::MAX;
-    const BITS: u8 = 128;
+    const BYTES: u8 = 16;
     type Array = [u8; 16];
     fn leading_zeros(&self) -> u8 {
         u128::leading_zeros(*self) as u8
