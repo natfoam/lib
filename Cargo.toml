@@ -3,5 +3,6 @@
 members = [
     "list-fn",
     "uints",
-    "bit-list"
+    "bit-list",
+    "sha2-compress",
 ]

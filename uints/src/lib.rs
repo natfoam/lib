@@ -1,16 +1,17 @@
 use std::fmt::Debug;
 use std::ops::{
-    Add, AddAssign, BitAnd, BitAndAssign, BitOr, BitOrAssign, Div, DivAssign, Mul, MulAssign, Rem,
-    Shl, ShlAssign, Shr, ShrAssign, Sub,
+    Add, AddAssign, BitAnd, BitAndAssign, BitOr, BitOrAssign, BitXor, BitXorAssign, Div, DivAssign,
+    IndexMut, Mul, MulAssign, Not, Rem, Shl, ShlAssign, Shr, ShrAssign, Sub,
 };
 
-pub trait Array {
-    type Item;
+pub trait Array: IndexMut<usize>
+where
+    Self::Output: Sized,
+{
     const SIZE: usize;
 }
 
 impl<Item, const SIZE: usize> Array for [Item; SIZE] {
-    type Item = Item;
     const SIZE: usize = SIZE;
 }
 
@@ -18,7 +19,7 @@ pub trait Common: Default + PartialOrd + Debug {
     const ZERO: Self;
     const ONE: Self;
     const MAX: Self;
-    type Array: Array<Item = u8>;
+    type Array: Array<Output = u8>;
     const BYTES: u8 = Self::Array::SIZE as u8;
     const BITS: u8 = Self::BYTES * 8;
     fn leading_zeros(&self) -> u8;
@@ -48,6 +49,9 @@ pub trait UInt:
     + BitOrAssign
     + BitAnd<Output = Self>
     + BitAndAssign
+    + BitXor<Output = Self>
+    + BitXorAssign
+    + Not<Output = Self>
 {
     fn remove(self, i: u8) -> Self {
         if i < Self::BITS {
@@ -64,6 +68,8 @@ pub trait UInt:
             self << d >> d
         }
     }
+    fn ror(self, i: u32) -> Self;
+    fn overflow_add(self, v: Self) -> Self;
 }
 
 pub trait Number: Common {
@@ -94,7 +100,14 @@ impl Common for u8 {
     }
 }
 
-impl UInt for u8 {}
+impl UInt for u8 {
+    fn ror(self, i: u32) -> Self {
+        self.rotate_right(i)
+    }
+    fn overflow_add(self, v: Self) -> Self {
+        self.overflowing_add(v).0
+    }
+}
 
 pub type U16 = [u8; 2];
 
@@ -128,7 +141,14 @@ impl Common for u32 {
     }
 }
 
-impl UInt for u32 {}
+impl UInt for u32 {
+    fn ror(self, i: u32) -> Self {
+        self.rotate_right(i)
+    }
+    fn overflow_add(self, v: Self) -> Self {
+        self.overflowing_add(v).0
+    }
+}
 
 pub type U64 = [U32; 2];
 
@@ -159,7 +179,14 @@ impl Common for u64 {
     }
 }
 
-impl UInt for u64 {}
+impl UInt for u64 {
+    fn ror(self, i: u32) -> Self {
+        self.rotate_right(i)
+    }
+    fn overflow_add(self, v: Self) -> Self {
+        self.overflowing_add(v).0
+    }
+}
 
 pub type U128 = [U64; 2];
 
@@ -204,7 +231,14 @@ impl Common for u128 {
     }
 }
 
-impl UInt for u128 {}
+impl UInt for u128 {
+    fn ror(self, i: u32) -> Self {
+        self.rotate_right(i)
+    }
+    fn overflow_add(self, v: Self) -> Self {
+        self.overflowing_add(v).0
+    }
+}
 
 impl Number for u8 {
     fn unset(&mut self, i: u8) {
