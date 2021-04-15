@@ -7,12 +7,12 @@ mod list;
 mod option;
 mod take;
 
-pub use crate::list::*;
 pub use collect::*;
 pub use empty::*;
 pub use flat_scan::*;
 pub use fold::*;
 pub use iter::*;
+pub use list::*;
 pub use option::*;
 pub use take::*;
 

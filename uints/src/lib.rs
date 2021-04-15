@@ -4,13 +4,23 @@ use std::ops::{
     Shl, ShlAssign, Shr, ShrAssign, Sub,
 };
 
+pub trait Array {
+    type Item;
+    const SIZE: usize;
+}
+
+impl<Item, const SIZE: usize> Array for [Item; SIZE] {
+    type Item = Item;
+    const SIZE: usize = SIZE;
+}
+
 pub trait Common: Default + PartialOrd + Debug {
     const ZERO: Self;
     const ONE: Self;
     const MAX: Self;
-    const BYTES: u8;
+    type Array: Array<Item = u8>;
+    const BYTES: u8 = Self::Array::SIZE as u8;
     const BITS: u8 = Self::BYTES * 8;
-    type Array;
     fn leading_zeros(&self) -> u8;
     fn trailing_zeros(&self) -> u8;
     fn count_ones(&self) -> u8;
@@ -69,7 +79,6 @@ impl Common for u8 {
     const ZERO: u8 = 0;
     const ONE: u8 = 1;
     const MAX: u8 = u8::MAX;
-    const BYTES: u8 = 1;
     type Array = [u8; 1];
     fn leading_zeros(&self) -> u8 {
         u8::leading_zeros(*self) as u8
@@ -87,27 +96,22 @@ impl Common for u8 {
 
 impl UInt for u8 {}
 
-pub struct U16(pub u8, pub u8);
+pub type U16 = [u8; 2];
 
-impl U16 {
-    pub fn new(v: u16) -> U16 {
-        U16(v as u8, (v >> 8) as u8)
-    }
+pub const fn u16_new(v: u16) -> U16 {
+    [v as u8, (v >> 8) as u8]
 }
 
-pub struct U32(pub U16, pub U16);
+pub type U32 = [U16; 2];
 
-impl U32 {
-    pub fn new(v: u32) -> U32 {
-        U32(U16::new(v as u16), U16::new((v >> 16) as u16))
-    }
+pub const fn u32_new(v: u32) -> U32 {
+    [u16_new(v as u16), u16_new((v >> 16) as u16)]
 }
 
 impl Common for u32 {
     const ZERO: u32 = 0;
     const ONE: u32 = 1;
     const MAX: u32 = u32::MAX;
-    const BYTES: u8 = 4;
     type Array = [u8; 4];
     fn leading_zeros(&self) -> u8 {
         u32::leading_zeros(*self) as u8
@@ -119,26 +123,23 @@ impl Common for u32 {
         u32::count_ones(*self) as u8
     }
     fn lsb0_array(&self) -> [u8; 4] {
-        let x = U32::new(*self);
-        [x.0 .0, x.0 .1, x.1 .0, x.1 .1]
+        let x = u32_new(*self);
+        [x[0][0], x[0][1], x[1][0], x[1][1]]
     }
 }
 
 impl UInt for u32 {}
 
-pub struct U64(pub U32, pub U32);
+pub type U64 = [U32; 2];
 
-impl U64 {
-    pub fn new(v: u64) -> U64 {
-        U64(U32::new(v as u32), U32::new((v >> 32) as u32))
-    }
+pub const fn u64_new(v: u64) -> U64 {
+    [u32_new(v as u32), u32_new((v >> 32) as u32)]
 }
 
 impl Common for u64 {
     const ZERO: u64 = 0;
     const ONE: u64 = 1;
     const MAX: u64 = u64::MAX;
-    const BYTES: u8 = 8;
     type Array = [u8; 8];
     fn leading_zeros(&self) -> u8 {
         u64::leading_zeros(*self) as u8
@@ -150,28 +151,26 @@ impl Common for u64 {
         u64::count_ones(*self) as u8
     }
     fn lsb0_array(&self) -> [u8; 8] {
-        let x = U64::new(*self);
+        let x = u64_new(*self);
         [
-            x.0 .0 .0, x.0 .0 .1, x.0 .1 .0, x.0 .1 .1, x.1 .0 .0, x.1 .0 .1, x.1 .1 .0, x.1 .1 .1,
+            x[0][0][0], x[0][0][1], x[0][1][0], x[0][1][1], x[1][0][0], x[1][0][1], x[1][1][0],
+            x[1][1][1],
         ]
     }
 }
 
 impl UInt for u64 {}
 
-pub struct U128(pub U64, pub U64);
+pub type U128 = [U64; 2];
 
-impl U128 {
-    pub fn new(v: u128) -> U128 {
-        U128(U64::new(v as u64), U64::new((v >> 64) as u64))
-    }
+pub const fn u128_new(v: u128) -> U128 {
+    [u64_new(v as u64), u64_new((v >> 64) as u64)]
 }
 
 impl Common for u128 {
     const ZERO: u128 = 0;
     const ONE: u128 = 1;
     const MAX: u128 = u128::MAX;
-    const BYTES: u8 = 16;
     type Array = [u8; 16];
     fn leading_zeros(&self) -> u8 {
         u128::leading_zeros(*self) as u8
@@ -183,24 +182,24 @@ impl Common for u128 {
         u128::count_ones(*self) as u8
     }
     fn lsb0_array(&self) -> [u8; 16] {
-        let x = U128::new(*self);
+        let x = u128_new(*self);
         [
-            x.0 .0 .0 .0,
-            x.0 .0 .0 .1,
-            x.0 .0 .1 .0,
-            x.0 .0 .1 .1,
-            x.0 .1 .0 .0,
-            x.0 .1 .0 .1,
-            x.0 .1 .1 .0,
-            x.0 .1 .1 .1,
-            x.1 .0 .0 .0,
-            x.1 .0 .0 .1,
-            x.1 .0 .1 .0,
-            x.1 .0 .1 .1,
-            x.1 .1 .0 .0,
-            x.1 .1 .0 .1,
-            x.1 .1 .1 .0,
-            x.1 .1 .1 .1,
+            x[0][0][0][0],
+            x[0][0][0][1],
+            x[0][0][1][0],
+            x[0][0][1][1],
+            x[0][1][0][0],
+            x[0][1][0][1],
+            x[0][1][1][0],
+            x[0][1][1][1],
+            x[1][0][0][0],
+            x[1][0][0][1],
+            x[1][0][1][0],
+            x[1][0][1][1],
+            x[1][1][0][0],
+            x[1][1][0][1],
+            x[1][1][1][0],
+            x[1][1][1][1],
         ]
     }
 }
