@@ -1,6 +1,7 @@
-use uints::{Array, UInt};
+use fixed_array::Array;
+use uints::UInt;
 
-struct BigSigma(u32, u32, u32);
+pub struct BigSigma(u32, u32, u32);
 
 impl BigSigma {
     fn get<I: UInt>(&self, v: I) -> I {
@@ -8,7 +9,7 @@ impl BigSigma {
     }
 }
 
-struct SmallSigma(u32, u32, u8);
+pub struct SmallSigma(u32, u32, u8);
 
 impl SmallSigma {
     fn get<I: UInt>(&self, v: I) -> I {
@@ -16,7 +17,7 @@ impl SmallSigma {
     }
 }
 
-trait Item: UInt + Copy + Sized {
+pub trait Item: UInt + Copy + Sized {
     type W: Array<Output = Self>;
     const K: Self::W;
     const BIG_S0: BigSigma;
@@ -168,71 +169,211 @@ impl Item for u64 {
     }
 }
 
-fn compress<I: Item>(h0: &[I; 8], h1: &[I; 8], h2: &[I; 8]) -> [I; 8] {
-    let mut w = I::w(h1, h2);
-    for i in 16..I::W::SIZE {
-        w[i] = w[i - 16]
-            .overflow_add(I::SMALL_S0.get(w[i - 15]))
-            .overflow_add(w[i - 7])
-            .overflow_add(I::SMALL_S1.get(w[i - 2]));
+pub trait Sha2 {
+    fn compress(&self, h1: &Self, h2: &Self) -> Self;
+}
+
+impl<I: Item> Sha2 for [I; 8] {
+    fn compress(&self, h1: &[I; 8], h2: &[I; 8]) -> [I; 8] {
+        let mut w = I::w(h1, h2);
+        for i in 16..I::W::SIZE {
+            w[i] = w[i - 16]
+                .overflow_add(I::SMALL_S0.get(w[i - 15]))
+                .overflow_add(w[i - 7])
+                .overflow_add(I::SMALL_S1.get(w[i - 2]));
+        }
+        let mut a = self[0];
+        let mut b = self[1];
+        let mut c = self[2];
+        let mut d = self[3];
+        let mut e = self[4];
+        let mut f = self[5];
+        let mut g = self[6];
+        let mut h = self[7];
+        for i in 0..I::W::SIZE {
+            let big_s1 = I::BIG_S1.get(e);
+            let ch = (e & f) ^ (!e & g);
+            let temp1 = h
+                .overflow_add(big_s1)
+                .overflow_add(ch)
+                .overflow_add(I::K[i])
+                .overflow_add(w[i]);
+            let big_s0 = I::BIG_S0.get(a);
+            let maj = (a & b) ^ (a & c) ^ (b & c);
+            let temp2 = big_s0.overflow_add(maj);
+            h = g;
+            g = f;
+            f = e;
+            e = d.overflow_add(temp1);
+            d = c;
+            c = b;
+            b = a;
+            a = temp1.overflow_add(temp2);
+        }
+        [
+            self[0].overflow_add(a),
+            self[1].overflow_add(b),
+            self[2].overflow_add(c),
+            self[3].overflow_add(d),
+            self[4].overflow_add(e),
+            self[5].overflow_add(f),
+            self[6].overflow_add(g),
+            self[7].overflow_add(h),
+        ]
     }
-    let mut a = h0[0];
-    let mut b = h0[1];
-    let mut c = h0[2];
-    let mut d = h0[3];
-    let mut e = h0[4];
-    let mut f = h0[5];
-    let mut g = h0[6];
-    let mut h = h0[7];
-    for i in 0..I::W::SIZE {
-        let big_s1 = I::BIG_S1.get(e);
-        let ch = (e & f) ^ (!e & g);
-        let temp1 = h
-            .overflow_add(big_s1)
-            .overflow_add(ch)
-            .overflow_add(I::K[i])
-            .overflow_add(w[i]);
-        let big_s0 = I::BIG_S0.get(a);
-        let maj = (a & b) ^ (a & c) ^ (b & c);
-        let temp2 = big_s0.overflow_add(maj);
-        h = g;
-        g = f;
-        f = e;
-        e = d.overflow_add(temp1);
-        d = c;
-        c = b;
-        b = a;
-        a = temp1.overflow_add(temp2);
-    }
-    [
-        h0[0].overflow_add(a),
-        h0[1].overflow_add(b),
-        h0[2].overflow_add(c),
-        h0[3].overflow_add(d),
-        h0[4].overflow_add(e),
-        h0[5].overflow_add(f),
-        h0[6].overflow_add(g),
-        h0[7].overflow_add(h),
-    ]
 }
 
 pub const SHA256: [u32; 8] = [
     0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19,
 ];
 
+pub const SHA224: [u32; 8] = [
+    0xc1059ed8, 0x367cd507, 0x3070dd17, 0xf70e5939, 0xffc00b31, 0x68581511, 0x64f98fa7, 0xbefa4fa4,
+];
+
+pub const SHA512: [u64; 8] = [
+    0x6a09e667f3bcc908,
+    0xbb67ae8584caa73b,
+    0x3c6ef372fe94f82b,
+    0xa54ff53a5f1d36f1,
+    0x510e527fade682d1,
+    0x9b05688c2b3e6c1f,
+    0x1f83d9abfb41bd6b,
+    0x5be0cd19137e2179,
+];
+
+pub const SHA384: [u64; 8] = [
+    0xcbbb9d5dc1059ed8,
+    0x629a292a367cd507,
+    0x9159015a3070dd17,
+    0x152fecd8f70e5939,
+    0x67332667ffc00b31,
+    0x8eb44a8768581511,
+    0xdb0c2e0d64f98fa7,
+    0x47b5481dbefa4fa4,
+];
+
+pub const SHA512_256: [u64; 8] = [
+    0x22312194FC2BF72C,
+    0x9F555FA3C84C64C2,
+    0x2393B86B6F53B151,
+    0x963877195940EABD,
+    0x96283EE2A88EFFE3,
+    0xBE5E1E2553863992,
+    0x2B0199FC2C85B8AA,
+    0x0EB72DDC81C52CA2,
+];
+
+pub const SHA512_224: [u64; 8] = [
+    0x8C3D37C819544DA2,
+    0x73E1996689DCD4D6,
+    0x1DFAB7AE32FF9C82,
+    0x679DD514582F9FCF,
+    0x0F6D2B697BD44DA8,
+    0x77E36F7304C48942,
+    0x3F9D85A86A1D36C8,
+    0x1112E6AD91D692A1,
+];
+
 #[cfg(test)]
 mod tests {
     use super::*;
     #[test]
-    fn it_works() {
-        let result = compress(
-            &SHA256,
-            &[0x80000000, 0, 0, 0, 0, 0, 0, 0],
+    fn sha256() {
+        let result = SHA256.compress(
+            &[0x8000_0000, 0, 0, 0, 0, 0, 0, 0],
             &[0, 0, 0, 0, 0, 0, 0, 0],
         );
         assert_eq!(
             result,
-            [0xe3b0c442, 0x98fc1c14, 0x9afbf4c8, 0x996fb924, 0x27ae41e4, 0x649b934c, 0xa495991b, 0x7852b855]
+            [
+                0xe3b0c442, 0x98fc1c14, 0x9afbf4c8, 0x996fb924, // 4
+                0x27ae41e4, 0x649b934c, 0xa495991b, 0x7852b855, // 8
+            ]
+        );
+    }
+    #[test]
+    fn sha224() {
+        let result = SHA224.compress(
+            &[0x8000_0000, 0, 0, 0, 0, 0, 0, 0],
+            &[0, 0, 0, 0, 0, 0, 0, 0],
+        );
+        assert_eq!(
+            result[0..7],
+            [0xd14a028c, 0x2a3a2bc9, 0x476102bb, 0x288234c4, 0x15a2b01f, 0x828ea62a, 0xc5b3e42f]
+        );
+    }
+    #[test]
+    fn sha512() {
+        let result = SHA512.compress(
+            &[0x8000_0000_0000_0000, 0, 0, 0, 0, 0, 0, 0],
+            &[0, 0, 0, 0, 0, 0, 0, 0],
+        );
+        assert_eq!(
+            result,
+            [
+                0xcf83_e135_7eef_b8bd,
+                0xf154_2850_d66d_8007,
+                0xd620_e405_0b57_15dc,
+                0x83f4_a921_d36c_e9ce,
+                0x47d0_d13c_5d85_f2b0,
+                0xff83_18d2_877e_ec2f,
+                0x63b9_31bd_4741_7a81,
+                0xa538_327a_f927_da3e,
+            ]
+        );
+    }
+    #[test]
+    fn sha384() {
+        let result = SHA384.compress(
+            &[0x8000_0000_0000_0000, 0, 0, 0, 0, 0, 0, 0],
+            &[0, 0, 0, 0, 0, 0, 0, 0],
+        );
+        assert_eq!(
+            result[0..6],
+            [
+                0x38b0_60a7_51ac_9638,
+                0x4cd9_327e_b1b1_e36a,
+                0x21fd_b711_14be_0743,
+                0x4c0c_c7bf_63f6_e1da,
+                0x274e_debf_e76f_65fb,
+                0xd51a_d2f1_4898_b95b,
+            ]
+        );
+    }
+    #[test]
+    fn sha512_256() {
+        let result = SHA512_256.compress(
+            &[0x8000_0000_0000_0000, 0, 0, 0, 0, 0, 0, 0],
+            &[0, 0, 0, 0, 0, 0, 0, 0],
+        );
+        assert_eq!(
+            result[0..4],
+            [
+                0xc672_b8d1_ef56_ed28,
+                0xab87_c362_2c51_1406,
+                0x9bdd_3ad7_b8f9_7374,
+                0x98d0_c01e_cef0_967a,
+            ]
+        );
+    }
+    #[test]
+    fn sha512_224() {
+        let result = SHA512_224.compress(
+            &[0x8000_0000_0000_0000, 0, 0, 0, 0, 0, 0, 0],
+            &[0, 0, 0, 0, 0, 0, 0, 0],
+        );
+        assert_eq!(
+            result[0..3],
+            [
+                0x6ed0_dd02_806f_a89e,
+                0x25de_060c_19d3_ac86,
+                0xcabb_87d6_a0dd_d05c,
+            ]
+        );
+        assert_eq!(
+            result[3] >> 32,
+            0x333b_84f4,
         );
     }
 }

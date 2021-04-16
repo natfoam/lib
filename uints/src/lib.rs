@@ -1,19 +1,9 @@
+use fixed_array::Array;
 use std::fmt::Debug;
 use std::ops::{
     Add, AddAssign, BitAnd, BitAndAssign, BitOr, BitOrAssign, BitXor, BitXorAssign, Div, DivAssign,
-    IndexMut, Mul, MulAssign, Not, Rem, Shl, ShlAssign, Shr, ShrAssign, Sub,
+    Mul, MulAssign, Not, Rem, Shl, ShlAssign, Shr, ShrAssign, Sub,
 };
-
-pub trait Array: IndexMut<usize>
-where
-    Self::Output: Sized,
-{
-    const SIZE: usize;
-}
-
-impl<Item, const SIZE: usize> Array for [Item; SIZE] {
-    const SIZE: usize = SIZE;
-}
 
 pub trait Common: Default + PartialOrd + Debug {
     const ZERO: Self;

@@ -5,4 +5,5 @@ members = [
     "uints",
     "bit-list",
     "sha2-compress",
+    "fixed-array",
 ]
