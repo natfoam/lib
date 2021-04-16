@@ -17,6 +17,8 @@ impl SmallSigma {
     }
 }
 
+pub type Hash<I> = [I; 8];
+
 pub trait Item: UInt + Copy + Sized {
     type W: Array<Output = Self>;
     const K: Self::W;
@@ -24,7 +26,7 @@ pub trait Item: UInt + Copy + Sized {
     const BIG_S1: BigSigma;
     const SMALL_S0: SmallSigma;
     const SMALL_S1: SmallSigma;
-    fn w(a: &[Self; 8], b: &[Self; 8]) -> Self::W;
+    fn w(a: &Hash<Self>, b: &Hash<Self>) -> Self::W;
 }
 
 impl Item for u32 {
@@ -51,7 +53,7 @@ impl Item for u32 {
     const BIG_S1: BigSigma = BigSigma(6, 11, 25);
     const SMALL_S0: SmallSigma = SmallSigma(7, 18, 3);
     const SMALL_S1: SmallSigma = SmallSigma(17, 19, 10);
-    fn w(a: &[Self; 8], b: &[Self; 8]) -> Self::W {
+    fn w(a: &Hash<Self>, b: &Hash<Self>) -> Self::W {
         [
             a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], // a
             b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7], // b
@@ -153,7 +155,7 @@ impl Item for u64 {
     const BIG_S1: BigSigma = BigSigma(14, 18, 41);
     const SMALL_S0: SmallSigma = SmallSigma(1, 8, 7);
     const SMALL_S1: SmallSigma = SmallSigma(19, 61, 6);
-    fn w(a: &[Self; 8], b: &[Self; 8]) -> Self::W {
+    fn w(a: &Hash<Self>, b: &Hash<Self>) -> Self::W {
         [
             a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], // a
             b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7], // b
@@ -173,8 +175,8 @@ pub trait Sha2 {
     fn compress(&self, h1: &Self, h2: &Self) -> Self;
 }
 
-impl<I: Item> Sha2 for [I; 8] {
-    fn compress(&self, h1: &[I; 8], h2: &[I; 8]) -> [I; 8] {
+impl<I: Item> Sha2 for Hash<I> {
+    fn compress(&self, h1: &Hash<I>, h2: &Hash<I>) -> Hash<I> {
         let mut w = I::w(h1, h2);
         for i in 16..I::W::SIZE {
             w[i] = w[i - 16]
@@ -223,15 +225,15 @@ impl<I: Item> Sha2 for [I; 8] {
     }
 }
 
-pub const SHA256: [u32; 8] = [
+pub const SHA256: Hash<u32> = [
     0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19,
 ];
 
-pub const SHA224: [u32; 8] = [
+pub const SHA224: Hash<u32> = [
     0xc1059ed8, 0x367cd507, 0x3070dd17, 0xf70e5939, 0xffc00b31, 0x68581511, 0x64f98fa7, 0xbefa4fa4,
 ];
 
-pub const SHA512: [u64; 8] = [
+pub const SHA512: Hash<u64> = [
     0x6a09e667f3bcc908,
     0xbb67ae8584caa73b,
     0x3c6ef372fe94f82b,
@@ -242,7 +244,7 @@ pub const SHA512: [u64; 8] = [
     0x5be0cd19137e2179,
 ];
 
-pub const SHA384: [u64; 8] = [
+pub const SHA384: Hash<u64> = [
     0xcbbb9d5dc1059ed8,
     0x629a292a367cd507,
     0x9159015a3070dd17,
@@ -253,7 +255,7 @@ pub const SHA384: [u64; 8] = [
     0x47b5481dbefa4fa4,
 ];
 
-pub const SHA512_256: [u64; 8] = [
+pub const SHA512_256: Hash<u64> = [
     0x22312194FC2BF72C,
     0x9F555FA3C84C64C2,
     0x2393B86B6F53B151,
@@ -264,7 +266,7 @@ pub const SHA512_256: [u64; 8] = [
     0x0EB72DDC81C52CA2,
 ];
 
-pub const SHA512_224: [u64; 8] = [
+pub const SHA512_224: Hash<u64> = [
     0x8C3D37C819544DA2,
     0x73E1996689DCD4D6,
     0x1DFAB7AE32FF9C82,
