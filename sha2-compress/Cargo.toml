@@ -1,9 +1,9 @@
 [package]
-name = "bit-list"
-version = "0.4.0"
+name = "sha2-compress"
+version = "0.1.0"
 authors = ["natfoam"]
 edition = "2018"
-description = "A lazy list of bits"
+description = "SHA2 compress function"
 license = "Apache-2.0"
 repository = "https://github.com/natfoam/lib"
 
@@ -11,4 +11,4 @@ repository = "https://github.com/natfoam/lib"
 
 [dependencies]
 uints = { path = "../uints", version = "0.5.0" }
-list-fn = { path = "../list-fn", version = "0.4.0" }
+fixed-array = { path = "../fixed-array", version = "0.1.0" }

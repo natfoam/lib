@@ -1,14 +1,12 @@
 [package]
-name = "bit-list"
-version = "0.4.0"
+name = "fixed-array"
+version = "0.1.0"
 authors = ["natfoam"]
 edition = "2018"
-description = "A lazy list of bits"
+description = "Fixed-size array"
 license = "Apache-2.0"
 repository = "https://github.com/natfoam/lib"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-uints = { path = "../uints", version = "0.5.0" }
-list-fn = { path = "../list-fn", version = "0.4.0" }
