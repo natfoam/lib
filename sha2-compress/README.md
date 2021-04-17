@@ -1,5 +1,14 @@
 # SHA2 Compress Function
 
+Pure Rust implementation of SHA2 compress functions.
+
+- [x] SHA256
+- [x] SHA224
+- [x] SHA512
+- [x] SHA384
+- [x] SHA512/256
+- [x] SHA512/224    
+
 ## TODO
 
 Investigate
