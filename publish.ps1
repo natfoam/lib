@@ -8,4 +8,6 @@ cd ../bit-list
 cargo publish
 cd ../sha2-compress
 cargo publish
+cd ../u144
+cargo publish
 cd ..

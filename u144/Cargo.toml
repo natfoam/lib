@@ -1,12 +1,10 @@
 [package]
-name = "fixed-array"
-version = "0.1.1"
+name = "u144"
+version = "0.1.0"
 authors = ["natfoam"]
 edition = "2018"
-description = "Fixed-size array"
-license = "Apache-2.0"
-repository = "https://github.com/natfoam/lib"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+uints = { path = "../uints", version = "0.5.0" }
