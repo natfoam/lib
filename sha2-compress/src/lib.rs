@@ -373,9 +373,6 @@ mod tests {
                 0xcabb_87d6_a0dd_d05c,
             ]
         );
-        assert_eq!(
-            result[3] >> 32,
-            0x333b_84f4,
-        );
+        assert_eq!(result[3] >> 32, 0x333b_84f4,);
     }
 }

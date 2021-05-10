@@ -1,4 +1,4 @@
-use list_fn::{Empty, FlatScan, FlatScanEx, FlatScanListFn, List, ListFn, Fn};
+use list_fn::{Empty, FlatScan, FlatScanEx, FlatScanListFn, ResultFn, List, ListFn};
 use std::marker::PhantomData;
 use uints::UInt;
 
@@ -43,7 +43,7 @@ impl<T: UInt> Default for Lsb0ListFn<T> {
 
 impl<T: UInt> FlatScan for Lsb0ListFn<T> {
     type InputItem = T;
-    type InputEnd = ();
+    type InputResult = ();
     type ItemList = Lsb0<T>;
     type EndList = Empty<bool>;
     fn item(self, item: T) -> Lsb0<T> {
@@ -58,8 +58,9 @@ pub trait BitsEx: ListFn
 where
     Self::Item: UInt,
 {
-    fn lsb0(self) -> FlatScanListFn<Self, Lsb0ListFn<Self::Item>> 
-        where Self::End: Fn<Result = ()>
+    fn lsb0(self) -> FlatScanListFn<Self, Lsb0ListFn<Self::Item>>
+    where
+        Self::End: ResultFn<Result = ()>,
     {
         self.flat_scan(Default::default())
     }

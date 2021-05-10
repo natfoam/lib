@@ -14,6 +14,13 @@ impl<I: Iterator> ListFn for &mut I {
     }
 }
 
+impl<I: Iterator> ResultFn for &mut I {
+    type Result = ();
+    fn result(self) -> () {
+        ()
+    }
+}
+
 pub struct ListIterator<S: ListFn<End = S>>(S);
 
 impl<S: ListFn<End = S>> Iterator for ListIterator<S> {

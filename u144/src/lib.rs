@@ -1,4 +1,4 @@
-use uints::{Common, Number, u128_new, u16_new};
+use uints::{u128_new, u16_new, Common, Number};
 
 #[derive(Debug, PartialEq, PartialOrd, Default)]
 pub struct U144 {

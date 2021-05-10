@@ -5,6 +5,7 @@ mod fold;
 mod iter;
 mod list;
 mod option;
+mod result;
 mod take;
 
 pub use collect::*;
@@ -14,6 +15,7 @@ pub use fold::*;
 pub use iter::*;
 pub use list::*;
 pub use option::*;
+pub use result::*;
 pub use take::*;
 
 #[cfg(test)]

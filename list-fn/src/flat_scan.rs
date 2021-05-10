@@ -1,26 +1,17 @@
 use super::*;
 
-pub trait Fn {
-    type Result;
-    fn get(self) -> Self::Result;
-}
-
-impl<I: Iterator> Fn for &mut I {
-    type Result = ();
-    fn get(self) -> () { () }
-}
-
 pub trait FlatScan {
     type InputItem;
-    type InputEnd;
+    type InputResult;
     type ItemList: ListFn<End = Self>;
     type EndList: ListFn<Item = <Self::ItemList as ListFn>::Item>;
     fn item(self, input: Self::InputItem) -> Self::ItemList;
-    fn end(self, e: Self::InputEnd) -> Self::EndList;
+    fn end(self, result: Self::InputResult) -> Self::EndList;
 }
 
-pub enum FlatScanListFn<I: ListFn, F: FlatScan<InputItem = I::Item>> 
-    where I::End: Fn<Result = F::InputEnd>
+pub enum FlatScanListFn<I: ListFn, F: FlatScan<InputItem = I::Item>>
+where
+    I::End: ResultFn<Result = F::InputResult>,
 {
     Begin { flat_scan: F, input: I },
     ItemList { item_list: F::ItemList, input: I },
@@ -28,8 +19,9 @@ pub enum FlatScanListFn<I: ListFn, F: FlatScan<InputItem = I::Item>>
     End(<F::EndList as ListFn>::End),
 }
 
-impl<I: ListFn, F: FlatScan<InputItem = I::Item>> ListFn for FlatScanListFn<I, F> 
-    where I::End: Fn<Result = F::InputEnd>
+impl<I: ListFn, F: FlatScan<InputItem = I::Item>> ListFn for FlatScanListFn<I, F>
+where
+    I::End: ResultFn<Result = F::InputResult>,
 {
     type Item = <F::ItemList as ListFn>::Item;
     type End = Self;
@@ -41,7 +33,7 @@ impl<I: ListFn, F: FlatScan<InputItem = I::Item>> ListFn for FlatScanListFn<I, F
                         item_list: flat_scan.item(first),
                         input: next,
                     },
-                    List::End(e) => FlatScanListFn::EndList(flat_scan.end(e.get())),
+                    List::End(end) => FlatScanListFn::EndList(flat_scan.end(end.result())),
                 },
                 FlatScanListFn::ItemList { item_list, input } => match item_list.list() {
                     List::Some(first, item_list) => {
@@ -62,11 +54,9 @@ impl<I: ListFn, F: FlatScan<InputItem = I::Item>> ListFn for FlatScanListFn<I, F
 }
 
 pub trait FlatScanEx: ListFn {
-    fn flat_scan<F: FlatScan<InputItem = Self::Item>>(
-        self,
-        flat_scan: F,
-    ) -> FlatScanListFn<Self, F> 
-        where Self::End: Fn<Result = F::InputEnd>
+    fn flat_scan<F: FlatScan<InputItem = Self::Item>>(self, flat_scan: F) -> FlatScanListFn<Self, F>
+    where
+        Self::End: ResultFn<Result = F::InputResult>,
     {
         FlatScanListFn::Begin {
             input: self,
