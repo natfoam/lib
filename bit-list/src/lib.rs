@@ -71,7 +71,7 @@ impl<L: ListFn> BitsEx for L where Self::Item: UInt {}
 #[cfg(test)]
 mod tests {
     use super::*;
-    use list_fn::{Collect, IntoIter, IntoIterWrap};
+    use list_fn::{Collect, IntoIterWrap};
     #[test]
     fn it_works() {
         let a: &[u8] = &[1, 2];
