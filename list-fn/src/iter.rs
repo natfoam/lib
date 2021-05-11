@@ -48,3 +48,34 @@ pub trait IntoIter: ListFn<End = Self> {
 }
 
 impl<S: ListFn<End = Self>> IntoIter for S {}
+
+pub enum ListIteratorWrap<L: ListFn> {
+    List(L),
+    End(L::End),
+}
+
+impl<L: ListFn> Iterator for ListIteratorWrap<L> {
+    type Item = L::Item;
+    fn next(&mut self) -> Option<Self::Item> {
+        let mut result = None;
+        take(self, |wrap| match wrap {
+            ListIteratorWrap::List(list) => match list.list() {
+                List::End(end) => ListIteratorWrap::End(end),
+                List::Some(first, next) => {
+                    result = Some(first);
+                    ListIteratorWrap::List(next)
+                }
+            },
+            end => end,
+        });
+        result
+    }
+}
+
+pub trait IntoIterWrap: ListFn {
+    fn iter_wrap(self) -> ListIteratorWrap<Self> {
+        ListIteratorWrap::List(self)
+    }
+}
+
+impl<L: ListFn> IntoIterWrap for L {}

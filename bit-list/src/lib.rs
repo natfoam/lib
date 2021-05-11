@@ -1,4 +1,4 @@
-use list_fn::{Empty, FlatScan, FlatScanEx, FlatScanListFn, ResultFn, List, ListFn};
+use list_fn::{Empty, FlatScan, FlatScanEx, FlatScanListFn, List, ListFn, ResultFn};
 use std::marker::PhantomData;
 use uints::UInt;
 
@@ -71,7 +71,7 @@ impl<L: ListFn> BitsEx for L where Self::Item: UInt {}
 #[cfg(test)]
 mod tests {
     use super::*;
-    use list_fn::{Collect, IntoIter};
+    use list_fn::{Collect, IntoIter, IntoIterWrap};
     #[test]
     fn it_works() {
         let a: &[u8] = &[1, 2];
@@ -93,7 +93,7 @@ mod tests {
         {
             let mut r = Vec::new();
             let v: Vec<u8> = vec![3, 4];
-            for elem in v.into_iter().lsb0().iter() {
+            for elem in v.into_iter().lsb0().iter_wrap() {
                 r.push(elem)
             }
             assert_eq!(
