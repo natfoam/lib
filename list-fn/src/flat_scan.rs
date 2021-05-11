@@ -24,7 +24,7 @@ where
     I::End: ResultFn<Result = F::InputResult>,
 {
     type Item = <F::ItemList as ListFn>::Item;
-    type End = Self;
+    type End = <F::EndList as ListFn>::End;
     fn list(mut self) -> List<Self> {
         loop {
             self = match self {
@@ -44,7 +44,7 @@ where
                 FlatScanListFn::EndList(end_list) => {
                     return match end_list.list() {
                         List::Some(first, next) => List::Some(first, FlatScanListFn::EndList(next)),
-                        List::End(end) => List::End(FlatScanListFn::End(end)),
+                        List::End(end) => List::End(end),
                     }
                 }
                 FlatScanListFn::End(end) => FlatScanListFn::End(end),
