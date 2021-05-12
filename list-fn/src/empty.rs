@@ -17,7 +17,7 @@ impl<T, E> Empty<T, E> {
     }
 }
 
-impl<T> ResultFn for Empty<T> {
-    type Result = ();
-    fn result(self) -> () { () }
+impl<T, E> ResultFn for Empty<T, E> {
+    type Result = E;
+    fn result(self) -> E { self.0 }
 }
