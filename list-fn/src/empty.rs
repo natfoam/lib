@@ -19,5 +19,7 @@ impl<T, E> Empty<T, E> {
 
 impl<T, E> ResultFn for Empty<T, E> {
     type Result = E;
-    fn result(self) -> E { self.0 }
+    fn result(self) -> E {
+        self.0
+    }
 }
