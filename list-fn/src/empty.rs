@@ -1,18 +1,18 @@
 use super::*;
 use std::marker::PhantomData;
 
-pub struct Empty<T>(PhantomData<T>);
+pub struct Empty<T, E>(E, PhantomData<T>);
 
-impl<T> ListFn for Empty<T> {
+impl<T, E> ListFn for Empty<T, E> {
     type Item = T;
-    type End = Self;
+    type End = E;
     fn list(self) -> List<Self> {
-        List::End(self)
+        List::End(self.0)
     }
 }
 
-impl<T> Default for Empty<T> {
-    fn default() -> Self {
-        Empty(PhantomData::default())
+impl<T, E> Empty<T, E> {
+    pub fn new(e: E) -> Self {
+        Empty(e, PhantomData::default())
     }
 }
