@@ -16,3 +16,8 @@ impl<T, E> Empty<T, E> {
         Empty(e, PhantomData::default())
     }
 }
+
+impl<T> ResultFn for Empty<T> {
+    type Result = ();
+    fn result(self) -> () { () }
+}
