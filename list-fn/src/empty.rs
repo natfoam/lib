@@ -6,7 +6,7 @@ pub struct Empty<T, E>(E, PhantomData<T>);
 impl<T, E> ListFn for Empty<T, E> {
     type Item = T;
     type End = E;
-    fn state(self) -> ListState<Self> {
+    fn next(self) -> ListState<Self> {
         ListState::End(self.0)
     }
 }

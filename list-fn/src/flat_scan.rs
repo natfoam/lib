@@ -28,24 +28,24 @@ where
 {
     type Item = <F::ItemList as ListFn>::Item;
     type End = <F::EndList as ListFn>::End;
-    fn state(mut self) -> ListState<Self> {
+    fn next(mut self) -> ListState<Self> {
         loop {
             self = match self {
-                FlatScanState::Begin { input, flat_scan } => match input.state() {
+                FlatScanState::Begin { input, flat_scan } => match input.next() {
                     ListState::Some(first, next) => FlatScanState::ItemList {
                         item_list: flat_scan.item(first),
                         input: next,
                     },
                     ListState::End(end) => FlatScanState::EndList(flat_scan.end(end.result())),
                 },
-                FlatScanState::ItemList { item_list, input } => match item_list.state() {
+                FlatScanState::ItemList { item_list, input } => match item_list.next() {
                     ListState::Some(first, item_list) => {
                         return ListState::Some(first, FlatScanState::ItemList { item_list, input })
                     }
                     ListState::End(flat_scan) => FlatScanState::Begin { input, flat_scan },
                 },
                 FlatScanState::EndList(end_list) => {
-                    return match end_list.state() {
+                    return match end_list.next() {
                         ListState::Some(first, next) => {
                             ListState::Some(first, FlatScanState::EndList(next))
                         }
@@ -101,7 +101,7 @@ mod tests {
         let x = Empty::<(), ()>::new(());
         let f = TestFlatScan();
         let list = x.flat_scan(f);
-        let list1 = list.state();
+        let list1 = list.next();
         // let list2 = list1.state();
     }
 }

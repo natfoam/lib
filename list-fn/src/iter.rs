@@ -6,7 +6,7 @@ impl<I: Iterator> ListFn for &mut I {
     type Item = I::Item;
     type End = Self;
     /// Converts an iterator into a list.
-    fn state(self) -> ListState<Self> {
+    fn next(self) -> ListState<Self> {
         match self.next() {
             Option::None => ListState::End(self),
             Option::Some(first) => ListState::Some(first, self),
@@ -25,7 +25,7 @@ impl<S: ListFn<End = S>> Iterator for ListIterator<S> {
     type Item = S::Item;
     fn next(&mut self) -> Option<Self::Item> {
         let mut result = None;
-        take(&mut self.0, |list| match list.state() {
+        take(&mut self.0, |list| match list.next() {
             ListState::End(end) => end,
             ListState::Some(first, next) => {
                 result = Some(first);
@@ -57,7 +57,7 @@ impl<L: ListFn> Iterator for ListIteratorWrap<L> {
     fn next(&mut self) -> Option<Self::Item> {
         let mut result = None;
         take(self, |wrap| match wrap {
-            ListIteratorWrap::List(list) => match list.state() {
+            ListIteratorWrap::List(list) => match list.next() {
                 ListState::End(end) => ListIteratorWrap::End(end),
                 ListState::Some(first, next) => {
                     result = Some(first);

@@ -19,7 +19,7 @@ impl<T: UInt> Lsb0List<T> {
 impl<T: UInt> ListFn for Lsb0List<T> {
     type Item = bool;
     type End = Lsb0FlatScan<T>;
-    fn state(self) -> ListState<Self> {
+    fn next(self) -> ListState<Self> {
         match self.size {
             0 => ListState::End(Default::default()),
             size => ListState::Some(

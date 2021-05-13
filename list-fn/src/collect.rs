@@ -8,8 +8,8 @@ struct CollectState<I: ListFn> {
 impl<I: ListFn> ListFn for CollectState<I> {
     type Item = ();
     type End = Vec<I::Item>;
-    fn state(mut self) -> ListState<Self> {
-        match self.input.state() {
+    fn next(mut self) -> ListState<Self> {
+        match self.input.next() {
             ListState::Some(first, next) => {
                 self.result.push(first);
                 ListState::Some(

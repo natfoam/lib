@@ -8,11 +8,11 @@ pub struct TakeList<L: ListFn> {
 impl<L: ListFn> ListFn for TakeList<L> {
     type Item = L::Item;
     type End = ();
-    fn state(self) -> ListState<Self> {
+    fn next(self) -> ListState<Self> {
         if self.count == 0 {
             ListState::End(())
         } else {
-            match self.input.state() {
+            match self.input.next() {
                 ListState::Some(first, input) => ListState::Some(
                     first,
                     TakeList {
