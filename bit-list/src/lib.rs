@@ -1,4 +1,4 @@
-use list_fn::{Empty, FlatScan, FlatScanFn, FlatScanState, ListFn, ListState, ResultFn};
+use list_fn::{FlatMapFn, FlatMapList, FlatMap, ListFn, ListState, ResultFn};
 use std::marker::PhantomData;
 use uints::UInt;
 
@@ -18,7 +18,7 @@ impl<T: UInt> Lsb0List<T> {
 
 impl<T: UInt> ListFn for Lsb0List<T> {
     type Item = bool;
-    type End = Lsb0FlatScan<T>;
+    type End = ();
     fn next(self) -> ListState<Self> {
         match self.size {
             0 => ListState::End(Default::default()),
@@ -33,24 +33,19 @@ impl<T: UInt> ListFn for Lsb0List<T> {
     }
 }
 
-pub struct Lsb0FlatScan<T: UInt>(PhantomData<T>);
+pub struct Lsb0FlatMap<T: UInt>(PhantomData<T>);
 
-impl<T: UInt> Default for Lsb0FlatScan<T> {
+impl<T: UInt> Default for Lsb0FlatMap<T> {
     fn default() -> Self {
         Self(Default::default())
     }
 }
 
-impl<T: UInt> FlatScanFn for Lsb0FlatScan<T> {
+impl<T: UInt> FlatMapFn for Lsb0FlatMap<T> {
     type InputItem = T;
-    type InputResult = ();
     type ItemList = Lsb0List<T>;
-    type EndList = Empty<bool, ()>;
-    fn map_item(self, item: T) -> Lsb0List<T> {
+    fn map(&self, item: T) -> Lsb0List<T> {
         Lsb0List::new(item)
-    }
-    fn map_result(self, _: ()) -> Empty<bool, ()> {
-        Empty::new(())
     }
 }
 
@@ -60,8 +55,8 @@ where
     Self::Item: UInt,
     Self::End: ResultFn<Result = ()>,
 {
-    fn lsb0(self) -> FlatScanState<Self, Lsb0FlatScan<Self::Item>> {
-        self.flat_scan(Lsb0FlatScan::default())
+    fn lsb0(self) -> FlatMapList<Self, Lsb0FlatMap<Self::Item>> {
+        self.flat_map(Lsb0FlatMap::default())
     }
 }
 

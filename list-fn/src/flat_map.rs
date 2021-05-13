@@ -1,6 +1,6 @@
 use super::*;
 
-pub trait FlatMapFn: Clone {
+pub trait FlatMapFn {
     type InputItem;
     type ItemList: ListFn;
     /// Map the given `input` item into a list.
@@ -53,3 +53,5 @@ pub trait FlatMap: ListFn {
         }
     }
 }
+
+impl<S: ListFn> FlatMap for S {}
