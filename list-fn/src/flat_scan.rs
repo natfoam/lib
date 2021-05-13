@@ -5,7 +5,9 @@ pub trait FlatScanFn {
     type InputResult;
     type ItemList: ListFn<End = Self>;
     type EndList: ListFn<Item = <Self::ItemList as ListFn>::Item>;
+    /// Map the given `input` item into a list.
     fn map_item(self, input: Self::InputItem) -> Self::ItemList;
+    /// Map the given `result` into an end list.
     fn map_result(self, result: Self::InputResult) -> Self::EndList;
 }
 
