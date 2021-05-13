@@ -2,29 +2,29 @@ use list_fn::{Empty, FlatScan, FlatScanEx, FlatScanListFn, List, ListFn, ResultF
 use std::marker::PhantomData;
 use uints::UInt;
 
-pub struct Lsb0<T: UInt> {
+pub struct Lsb0List<T: UInt> {
     value: T,
     size: u8,
 }
 
-impl<T: UInt> Lsb0<T> {
+impl<T: UInt> Lsb0List<T> {
     fn new(value: T) -> Self {
-        Self {
+        Lsb0List {
             value,
             size: T::BITS,
         }
     }
 }
 
-impl<T: UInt> ListFn for Lsb0<T> {
+impl<T: UInt> ListFn for Lsb0List<T> {
     type Item = bool;
-    type End = Lsb0ListFn<T>;
+    type End = Lsb0<T>;
     fn list(self) -> List<Self> {
         match self.size {
             0 => List::End(Default::default()),
             size => List::Some(
                 self.value & T::ONE != T::ZERO,
-                Self {
+                Lsb0List {
                     value: self.value >> 1,
                     size: size - 1,
                 },
@@ -33,21 +33,21 @@ impl<T: UInt> ListFn for Lsb0<T> {
     }
 }
 
-pub struct Lsb0ListFn<T: UInt>(PhantomData<T>);
+pub struct Lsb0<T: UInt>(PhantomData<T>);
 
-impl<T: UInt> Default for Lsb0ListFn<T> {
+impl<T: UInt> Default for Lsb0<T> {
     fn default() -> Self {
         Self(Default::default())
     }
 }
 
-impl<T: UInt> FlatScan for Lsb0ListFn<T> {
+impl<T: UInt> FlatScan for Lsb0<T> {
     type InputItem = T;
     type InputResult = ();
-    type ItemList = Lsb0<T>;
+    type ItemList = Lsb0List<T>;
     type EndList = Empty<bool, ()>;
-    fn item(self, item: T) -> Lsb0<T> {
-        Lsb0::new(item)
+    fn item(self, item: T) -> Lsb0List<T> {
+        Lsb0List::new(item)
     }
     fn end(self, _: ()) -> Empty<bool, ()> {
         Empty::new(())
@@ -58,7 +58,7 @@ pub trait BitsEx: ListFn
 where
     Self::Item: UInt,
 {
-    fn lsb0(self) -> FlatScanListFn<Self, Lsb0ListFn<Self::Item>>
+    fn lsb0(self) -> FlatScanListFn<Self, Lsb0<Self::Item>>
     where
         Self::End: ResultFn<Result = ()>,
     {
