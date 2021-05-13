@@ -5,8 +5,8 @@ pub trait FlatScanFn {
     type InputResult;
     type ItemList: ListFn<End = Self>;
     type EndList: ListFn<Item = <Self::ItemList as ListFn>::Item>;
-    fn item(self, input: Self::InputItem) -> Self::ItemList;
-    fn end(self, result: Self::InputResult) -> Self::EndList;
+    fn map_item(self, input: Self::InputItem) -> Self::ItemList;
+    fn map_result(self, result: Self::InputResult) -> Self::EndList;
 }
 
 pub enum FlatScanState<I, F>
@@ -15,8 +15,8 @@ where
     F: FlatScanFn<InputItem = I::Item>,
     I::End: ResultFn<Result = F::InputResult>,
 {
-    Begin { flat_scan: F, input: I },
-    ItemList { item_list: F::ItemList, input: I },
+    Begin { flat_scan: F, input_list: I },
+    ItemList { item_list: F::ItemList, input_list: I },
     EndList(F::EndList),
 }
 
@@ -31,18 +31,18 @@ where
     fn next(mut self) -> ListState<Self> {
         loop {
             self = match self {
-                FlatScanState::Begin { input, flat_scan } => match input.next() {
+                FlatScanState::Begin { input_list, flat_scan } => match input_list.next() {
                     ListState::Some(first, next) => FlatScanState::ItemList {
-                        item_list: flat_scan.item(first),
-                        input: next,
+                        item_list: flat_scan.map_item(first),
+                        input_list: next,
                     },
-                    ListState::End(end) => FlatScanState::EndList(flat_scan.end(end.result())),
+                    ListState::End(end) => FlatScanState::EndList(flat_scan.map_result(end.result())),
                 },
-                FlatScanState::ItemList { item_list, input } => match item_list.next() {
+                FlatScanState::ItemList { item_list, input_list } => match item_list.next() {
                     ListState::Some(first, item_list) => {
-                        return ListState::Some(first, FlatScanState::ItemList { item_list, input })
+                        return ListState::Some(first, FlatScanState::ItemList { item_list, input_list })
                     }
-                    ListState::End(flat_scan) => FlatScanState::Begin { input, flat_scan },
+                    ListState::End(flat_scan) => FlatScanState::Begin { input_list, flat_scan },
                 },
                 FlatScanState::EndList(end_list) => {
                     return match end_list.next() {
@@ -64,7 +64,7 @@ pub trait FlatScan: ListFn {
         Self::End: ResultFn<Result = F::InputResult>,
     {
         FlatScanState::Begin {
-            input: self,
+            input_list: self,
             flat_scan,
         }
     }
@@ -88,10 +88,10 @@ mod tests {
         type InputResult = ();
         type ItemList = Empty<(), Self>;
         type EndList = Empty<(), Self>;
-        fn item(self, _: ()) -> Self::ItemList {
+        fn map_item(self, _: ()) -> Self::ItemList {
             Empty::new(self)
         }
-        fn end(self, _: ()) -> Self::EndList {
+        fn map_result(self, _: ()) -> Self::EndList {
             Empty::new(self)
         }
     }

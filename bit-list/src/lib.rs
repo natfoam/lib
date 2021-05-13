@@ -46,10 +46,10 @@ impl<T: UInt> FlatScanFn for Lsb0FlatScan<T> {
     type InputResult = ();
     type ItemList = Lsb0List<T>;
     type EndList = Empty<bool, ()>;
-    fn item(self, item: T) -> Lsb0List<T> {
+    fn map_item(self, item: T) -> Lsb0List<T> {
         Lsb0List::new(item)
     }
-    fn end(self, _: ()) -> Empty<bool, ()> {
+    fn map_result(self, _: ()) -> Empty<bool, ()> {
         Empty::new(())
     }
 }
