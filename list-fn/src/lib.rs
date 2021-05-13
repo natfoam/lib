@@ -1,5 +1,6 @@
 mod collect;
 mod empty;
+mod flat_map;
 mod flat_scan;
 mod fold;
 mod iter;
@@ -10,6 +11,7 @@ mod take;
 
 pub use collect::*;
 pub use empty::*;
+pub use flat_map::*;
 pub use flat_scan::*;
 pub use fold::*;
 pub use iter::*;
@@ -26,7 +28,7 @@ mod tests {
 
     impl<'a> ResultFn for Ref<'a> {
         type Result = ();
-        fn result(self) { }
+        fn result(self) {}
     }
 
     impl<'a> ListFn for Ref<'a> {
@@ -47,7 +49,7 @@ mod tests {
 
     impl ResultFn for Range10 {
         type Result = ();
-        fn result(self) { }
+        fn result(self) {}
     }
 
     impl ListFn for Range10 {

@@ -58,10 +58,9 @@ pub trait Lsb0
 where
     Self: ListFn,
     Self::Item: UInt,
-    Self::End: ResultFn<Result = ()>
+    Self::End: ResultFn<Result = ()>,
 {
-    fn lsb0(self) -> FlatScanState<Self, Lsb0FlatScan<Self::Item>>
-    {
+    fn lsb0(self) -> FlatScanState<Self, Lsb0FlatScan<Self::Item>> {
         self.flat_scan(Lsb0FlatScan::default())
     }
 }
@@ -70,7 +69,7 @@ impl<L> Lsb0 for L
 where
     Self: ListFn,
     Self::Item: UInt,
-    Self::End: ResultFn<Result = ()>
+    Self::End: ResultFn<Result = ()>,
 {
 }
 

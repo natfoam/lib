@@ -17,8 +17,14 @@ where
     F: FlatScanFn<InputItem = I::Item>,
     I::End: ResultFn<Result = F::InputResult>,
 {
-    Begin { flat_scan: F, input_list: I },
-    ItemList { item_list: F::ItemList, input_list: I },
+    Begin {
+        flat_scan: F,
+        input_list: I,
+    },
+    ItemList {
+        item_list: F::ItemList,
+        input_list: I,
+    },
     EndList(F::EndList),
 }
 
@@ -33,18 +39,35 @@ where
     fn next(mut self) -> ListState<Self> {
         loop {
             self = match self {
-                FlatScanState::Begin { input_list, flat_scan } => match input_list.next() {
+                FlatScanState::Begin {
+                    input_list,
+                    flat_scan,
+                } => match input_list.next() {
                     ListState::Some(first, next) => FlatScanState::ItemList {
                         item_list: flat_scan.map_item(first),
                         input_list: next,
                     },
-                    ListState::End(end) => FlatScanState::EndList(flat_scan.map_result(end.result())),
-                },
-                FlatScanState::ItemList { item_list, input_list } => match item_list.next() {
-                    ListState::Some(first, item_list) => {
-                        return ListState::Some(first, FlatScanState::ItemList { item_list, input_list })
+                    ListState::End(end) => {
+                        FlatScanState::EndList(flat_scan.map_result(end.result()))
                     }
-                    ListState::End(flat_scan) => FlatScanState::Begin { input_list, flat_scan },
+                },
+                FlatScanState::ItemList {
+                    item_list,
+                    input_list,
+                } => match item_list.next() {
+                    ListState::Some(first, item_list) => {
+                        return ListState::Some(
+                            first,
+                            FlatScanState::ItemList {
+                                item_list,
+                                input_list,
+                            },
+                        )
+                    }
+                    ListState::End(flat_scan) => FlatScanState::Begin {
+                        input_list,
+                        flat_scan,
+                    },
                 },
                 FlatScanState::EndList(end_list) => {
                     return match end_list.next() {
@@ -103,7 +126,6 @@ mod tests {
         let x = Empty::<(), ()>::new(());
         let f = TestFlatScan();
         let list = x.flat_scan(f);
-        let list1 = list.next();
-        // let list2 = list1.state();
+        let _list1 = list.next();
     }
 }
