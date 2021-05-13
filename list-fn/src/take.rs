@@ -1,11 +1,11 @@
 use super::*;
 
-pub struct Take<L: ListFn> {
+pub struct TakeList<L: ListFn> {
     input: L,
     count: usize,
 }
 
-impl<L: ListFn> ListFn for Take<L> {
+impl<L: ListFn> ListFn for TakeList<L> {
     type Item = L::Item;
     type End = ();
     fn state(self) -> ListState<Self> {
@@ -15,7 +15,7 @@ impl<L: ListFn> ListFn for Take<L> {
             match self.input.state() {
                 ListState::Some(first, input) => ListState::Some(
                     first,
-                    Take {
+                    TakeList {
                         input,
                         count: self.count - 1,
                     },
@@ -26,10 +26,10 @@ impl<L: ListFn> ListFn for Take<L> {
     }
 }
 
-pub trait TakeEx: ListFn {
-    fn take(self, count: usize) -> Take<Self> {
-        Take { input: self, count }
+pub trait Take: ListFn {
+    fn take(self, count: usize) -> TakeList<Self> {
+        TakeList { input: self, count }
     }
 }
 
-impl<L: ListFn> TakeEx for L {}
+impl<L: ListFn> Take for L {}
