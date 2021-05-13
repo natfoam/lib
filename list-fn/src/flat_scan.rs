@@ -1,6 +1,6 @@
 use super::*;
 
-pub trait FlatScan {
+pub trait FlatScanFn {
     type InputItem;
     type InputResult;
     type ItemList: ListFn<End = Self>;
@@ -9,8 +9,10 @@ pub trait FlatScan {
     fn end(self, result: Self::InputResult) -> Self::EndList;
 }
 
-pub enum FlatScanListFn<I: ListFn, F: FlatScan<InputItem = I::Item>>
+pub enum FlatScanState<I, F>
 where
+    I: ListFn,
+    F: FlatScanFn<InputItem = I::Item>,
     I::End: ResultFn<Result = F::InputResult>,
 {
     Begin { flat_scan: F, input: I },
@@ -19,50 +21,57 @@ where
     End(<F::EndList as ListFn>::End),
 }
 
-impl<I: ListFn, F: FlatScan<InputItem = I::Item>> ListFn for FlatScanListFn<I, F>
+impl<I, F> ListFn for FlatScanState<I, F>
 where
+    I: ListFn,
+    F: FlatScanFn<InputItem = I::Item>,
     I::End: ResultFn<Result = F::InputResult>,
 {
     type Item = <F::ItemList as ListFn>::Item;
     type End = <F::EndList as ListFn>::End;
-    fn list(mut self) -> List<Self> {
+    fn state(mut self) -> ListState<Self> {
         loop {
             self = match self {
-                FlatScanListFn::Begin { input, flat_scan } => match input.list() {
-                    List::Some(first, next) => FlatScanListFn::ItemList {
+                FlatScanState::Begin { input, flat_scan } => match input.state() {
+                    ListState::Some(first, next) => FlatScanState::ItemList {
                         item_list: flat_scan.item(first),
                         input: next,
                     },
-                    List::End(end) => FlatScanListFn::EndList(flat_scan.end(end.result())),
+                    ListState::End(end) => FlatScanState::EndList(flat_scan.end(end.result())),
                 },
-                FlatScanListFn::ItemList { item_list, input } => match item_list.list() {
-                    List::Some(first, item_list) => {
-                        return List::Some(first, FlatScanListFn::ItemList { item_list, input })
+                FlatScanState::ItemList { item_list, input } => match item_list.state() {
+                    ListState::Some(first, item_list) => {
+                        return ListState::Some(first, FlatScanState::ItemList { item_list, input })
                     }
-                    List::End(flat_scan) => FlatScanListFn::Begin { input, flat_scan },
+                    ListState::End(flat_scan) => FlatScanState::Begin { input, flat_scan },
                 },
-                FlatScanListFn::EndList(end_list) => {
-                    return match end_list.list() {
-                        List::Some(first, next) => List::Some(first, FlatScanListFn::EndList(next)),
-                        List::End(end) => List::End(end),
+                FlatScanState::EndList(end_list) => {
+                    return match end_list.state() {
+                        ListState::Some(first, next) => {
+                            ListState::Some(first, FlatScanState::EndList(next))
+                        }
+                        ListState::End(end) => ListState::End(end),
                     }
                 }
-                FlatScanListFn::End(end) => FlatScanListFn::End(end),
+                end => end,
             }
         }
     }
 }
 
-pub trait FlatScanEx: ListFn {
-    fn flat_scan<F: FlatScan<InputItem = Self::Item>>(self, flat_scan: F) -> FlatScanListFn<Self, F>
+pub trait FlatScan: ListFn {
+    fn flat_scan<F: FlatScanFn<InputItem = Self::Item>>(
+        self,
+        flat_scan: F,
+    ) -> FlatScanState<Self, F>
     where
         Self::End: ResultFn<Result = F::InputResult>,
     {
-        FlatScanListFn::Begin {
+        FlatScanState::Begin {
             input: self,
             flat_scan,
         }
     }
 }
 
-impl<S: ListFn> FlatScanEx for S {}
+impl<S: ListFn> FlatScan for S {}

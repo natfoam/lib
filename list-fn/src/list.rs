@@ -1,5 +1,5 @@
 /// A list.
-pub enum List<F: ListFn> {
+pub enum ListState<F: ListFn> {
     /// The list has one item and a function to get a next sub list.
     Some(F::Item, F),
     /// The end of the list.
@@ -13,5 +13,5 @@ pub trait ListFn: Sized {
     /// A value which is returned when the list has no more items.
     type End;
     /// The main function which returns a list.
-    fn list(self) -> List<Self>;
+    fn state(self) -> ListState<Self>;
 }

@@ -3,9 +3,9 @@ use super::*;
 pub trait Fold: ListFn {
     fn fold(mut self) -> Self::End {
         loop {
-            match self.list() {
-                List::Some(_, next) => self = next,
-                List::End(end) => return end,
+            match self.state() {
+                ListState::Some(_, next) => self = next,
+                ListState::End(end) => return end,
             }
         }
     }

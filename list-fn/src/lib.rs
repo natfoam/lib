@@ -27,13 +27,13 @@ mod tests {
     impl<'a> ListFn for Ref<'a> {
         type Item = u32;
         type End = Self;
-        fn list(self) -> List<Self> {
+        fn state(self) -> ListState<Self> {
             let first = *self.0;
             if first < 10 {
                 *self.0 += 1;
-                List::Some(first, self)
+                ListState::Some(first, self)
             } else {
-                List::End(self)
+                ListState::End(self)
             }
         }
     }
@@ -43,12 +43,12 @@ mod tests {
     impl<'a> ListFn for Range10 {
         type Item = u32;
         type End = Self;
-        fn list(self) -> List<Self> {
+        fn state(self) -> ListState<Self> {
             let first = self.0;
             if first < 10 {
-                List::Some(first, Self(first + 1))
+                ListState::Some(first, Self(first + 1))
             } else {
-                List::End(self)
+                ListState::End(self)
             }
         }
     }

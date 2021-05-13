@@ -4,10 +4,10 @@ use super::*;
 impl<T> ListFn for Option<T> {
     type Item = T;
     type End = Self;
-    fn list(self) -> List<Self> {
+    fn state(self) -> ListState<Self> {
         match self {
-            Option::Some(first) => List::Some(first, Option::None),
-            Option::None => List::End(Option::None),
+            Option::Some(first) => ListState::Some(first, Option::None),
+            Option::None => ListState::End(Option::None),
         }
     }
 }

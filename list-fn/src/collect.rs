@@ -1,33 +1,33 @@
 use super::*;
 
-struct CollectVec<I: ListFn> {
+struct CollectState<I: ListFn> {
     end: Vec<I::Item>,
     input: I,
 }
 
-impl<I: ListFn> ListFn for CollectVec<I> {
+impl<I: ListFn> ListFn for CollectState<I> {
     type Item = ();
     type End = Vec<I::Item>;
-    fn list(mut self) -> List<Self> {
-        match self.input.list() {
-            List::Some(first, next) => {
+    fn state(mut self) -> ListState<Self> {
+        match self.input.state() {
+            ListState::Some(first, next) => {
                 self.end.push(first);
-                List::Some(
+                ListState::Some(
                     (),
-                    CollectVec {
+                    CollectState {
                         end: self.end,
                         input: next,
                     },
                 )
             }
-            List::End(..) => List::End(self.end),
+            ListState::End(..) => ListState::End(self.end),
         }
     }
 }
 
 pub trait Collect: ListFn {
     fn collect(self) -> Vec<Self::Item> {
-        CollectVec {
+        CollectState {
             end: Vec::new(),
             input: self,
         }
