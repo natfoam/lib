@@ -16,9 +16,7 @@ impl<I: Iterator> ListFn for &mut I {
 
 impl<I: Iterator> ResultFn for &mut I {
     type Result = ();
-    fn result(self) -> () {
-        ()
-    }
+    fn result(self) {}
 }
 
 pub struct ListIterator<S: ListFn<End = S>>(S);
@@ -40,14 +38,14 @@ impl<S: ListFn<End = S>> Iterator for ListIterator<S> {
 
 /// Note: we can't use the standard std::iter::IntoIterator because it has
 /// a conflicting implementation.
-pub trait IntoIter: ListFn<End = Self> {
+pub trait Iter: ListFn<End = Self> {
     /// Converts a list to an iterator.
     fn iter(self) -> ListIterator<Self> {
         ListIterator(self)
     }
 }
 
-impl<S: ListFn<End = Self>> IntoIter for S {}
+impl<S: ListFn<End = Self>> Iter for S {}
 
 pub enum ListIteratorWrap<L: ListFn> {
     List(L),
@@ -72,10 +70,10 @@ impl<L: ListFn> Iterator for ListIteratorWrap<L> {
     }
 }
 
-pub trait IntoIterWrap: ListFn {
+pub trait IterWrap: ListFn {
     fn iter_wrap(self) -> ListIteratorWrap<Self> {
         ListIteratorWrap::List(self)
     }
 }
 
-impl<L: ListFn> IntoIterWrap for L {}
+impl<L: ListFn> IterWrap for L {}

@@ -18,7 +18,6 @@ where
     Begin { flat_scan: F, input: I },
     ItemList { item_list: F::ItemList, input: I },
     EndList(F::EndList),
-    End(<F::EndList as ListFn>::End),
 }
 
 impl<I, F> ListFn for FlatScanState<I, F>
@@ -53,18 +52,15 @@ where
                         ListState::End(end) => ListState::End(end),
                     }
                 }
-                end => end,
             }
         }
     }
 }
 
 pub trait FlatScan: ListFn {
-    fn flat_scan<F: FlatScanFn<InputItem = Self::Item>>(
-        self,
-        flat_scan: F,
-    ) -> FlatScanState<Self, F>
+    fn flat_scan<F>(self, flat_scan: F) -> FlatScanState<Self, F>
     where
+        F: FlatScanFn<InputItem = Self::Item>,
         Self::End: ResultFn<Result = F::InputResult>,
     {
         FlatScanState::Begin {
@@ -75,3 +71,37 @@ pub trait FlatScan: ListFn {
 }
 
 impl<S: ListFn> FlatScan for S {}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    struct TestFlatScan();
+
+    impl ResultFn for TestFlatScan {
+        type Result = ();
+        fn result(self) {}
+    }
+
+    impl FlatScanFn for TestFlatScan {
+        type InputItem = ();
+        type InputResult = ();
+        type ItemList = Empty<(), Self>;
+        type EndList = Empty<(), Self>;
+        fn item(self, _: ()) -> Self::ItemList {
+            Empty::new(self)
+        }
+        fn end(self, _: ()) -> Self::EndList {
+            Empty::new(self)
+        }
+    }
+
+    #[test]
+    fn flat_scan_end() {
+        let x = Empty::<(), ()>::new(());
+        let f = TestFlatScan();
+        let list = x.flat_scan(f);
+        let list1 = list.state();
+        // let list2 = list1.state();
+    }
+}

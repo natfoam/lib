@@ -11,3 +11,8 @@ impl<T> ListFn for Option<T> {
         }
     }
 }
+
+impl<T> ResultFn for Option<T> {
+    type Result = ();
+    fn result(self) {}
+}

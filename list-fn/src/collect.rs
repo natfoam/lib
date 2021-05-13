@@ -1,7 +1,7 @@
 use super::*;
 
 struct CollectState<I: ListFn> {
-    end: Vec<I::Item>,
+    result: Vec<I::Item>,
     input: I,
 }
 
@@ -11,16 +11,16 @@ impl<I: ListFn> ListFn for CollectState<I> {
     fn state(mut self) -> ListState<Self> {
         match self.input.state() {
             ListState::Some(first, next) => {
-                self.end.push(first);
+                self.result.push(first);
                 ListState::Some(
                     (),
                     CollectState {
-                        end: self.end,
+                        result: self.result,
                         input: next,
                     },
                 )
             }
-            ListState::End(..) => ListState::End(self.end),
+            ListState::End(..) => ListState::End(self.result),
         }
     }
 }
@@ -28,7 +28,7 @@ impl<I: ListFn> ListFn for CollectState<I> {
 pub trait Collect: ListFn {
     fn collect(self) -> Vec<Self::Item> {
         CollectState {
-            end: Vec::new(),
+            result: Vec::new(),
             input: self,
         }
         .fold()

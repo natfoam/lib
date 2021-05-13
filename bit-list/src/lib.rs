@@ -18,7 +18,7 @@ impl<T: UInt> Lsb0List<T> {
 
 impl<T: UInt> ListFn for Lsb0List<T> {
     type Item = bool;
-    type End = Lsb0<T>;
+    type End = Lsb0FlatScan<T>;
     fn state(self) -> ListState<Self> {
         match self.size {
             0 => ListState::End(Default::default()),
@@ -33,15 +33,15 @@ impl<T: UInt> ListFn for Lsb0List<T> {
     }
 }
 
-pub struct Lsb0<T: UInt>(PhantomData<T>);
+pub struct Lsb0FlatScan<T: UInt>(PhantomData<T>);
 
-impl<T: UInt> Default for Lsb0<T> {
+impl<T: UInt> Default for Lsb0FlatScan<T> {
     fn default() -> Self {
         Self(Default::default())
     }
 }
 
-impl<T: UInt> FlatScanFn for Lsb0<T> {
+impl<T: UInt> FlatScanFn for Lsb0FlatScan<T> {
     type InputItem = T;
     type InputResult = ();
     type ItemList = Lsb0List<T>;
@@ -54,24 +54,30 @@ impl<T: UInt> FlatScanFn for Lsb0<T> {
     }
 }
 
-pub trait BitsEx: ListFn
+pub trait Lsb0
 where
+    Self: ListFn,
     Self::Item: UInt,
+    Self::End: ResultFn<Result = ()>
 {
-    fn lsb0(self) -> FlatScanState<Self, Lsb0<Self::Item>>
-    where
-        Self::End: ResultFn<Result = ()>,
+    fn lsb0(self) -> FlatScanState<Self, Lsb0FlatScan<Self::Item>>
     {
-        self.flat_scan(Default::default())
+        self.flat_scan(Lsb0FlatScan::default())
     }
 }
 
-impl<L: ListFn> BitsEx for L where Self::Item: UInt {}
+impl<L> Lsb0 for L
+where
+    Self: ListFn,
+    Self::Item: UInt,
+    Self::End: ResultFn<Result = ()>
+{
+}
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use list_fn::{Collect, IntoIterWrap};
+    use list_fn::{Collect, IterWrap};
     #[test]
     fn it_works() {
         let a: &[u8] = &[1, 2];

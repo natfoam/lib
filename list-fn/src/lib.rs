@@ -24,6 +24,11 @@ mod tests {
 
     struct Ref<'a>(&'a mut u32);
 
+    impl<'a> ResultFn for Ref<'a> {
+        type Result = ();
+        fn result(self) { }
+    }
+
     impl<'a> ListFn for Ref<'a> {
         type Item = u32;
         type End = Self;
@@ -40,7 +45,12 @@ mod tests {
 
     struct Range10(u32);
 
-    impl<'a> ListFn for Range10 {
+    impl ResultFn for Range10 {
+        type Result = ();
+        fn result(self) { }
+    }
+
+    impl ListFn for Range10 {
         type Item = u32;
         type End = Self;
         fn state(self) -> ListState<Self> {
