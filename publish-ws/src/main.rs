@@ -36,9 +36,7 @@ fn main() {
             (member.clone(), cargo_toml.dependencies)
         })
         .collect();
-    // TODO:
-    // 1. check if a package is available after uploading using `cargo search`.
-    // 2. check if a package version is already uploaded.
+    // Publish dependent packages first.
     while !map.is_empty() {
         let member = map
             .iter()
@@ -53,6 +51,11 @@ fn main() {
         println!("{}", member);
         println!();
         {
+            // TODO:
+            // 1. check if a package is available after uploading using `cargo search`.
+            // 2. check if a package version is already uploaded.
+            //
+            // Note:
             // don't use `canonicalize`. `canonicalize` returns a UNC path.
             // https://github.com/rust-lang/rust/issues/42869
             // `cargo` can't handle properly UNC paths.
