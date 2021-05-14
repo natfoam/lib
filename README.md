@@ -10,4 +10,5 @@ Rust libraries
   trait Fold: ListFn {
       fn fold(self) -> Self::End { ... }
   }
+  impl<T: ListFn> Fold for T {}
   ```
