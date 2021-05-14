@@ -1,6 +1,7 @@
 mod collect;
 mod empty;
 mod filter;
+mod filter_scan;
 mod flat_map;
 mod flat_scan;
 mod flatten;
@@ -17,6 +18,7 @@ mod take;
 pub use collect::*;
 pub use empty::*;
 pub use filter::*;
+pub use filter_scan::*;
 pub use flat_map::*;
 pub use flat_scan::*;
 pub use flatten::*;

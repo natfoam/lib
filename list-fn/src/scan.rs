@@ -1,6 +1,9 @@
 use super::*;
 
-pub struct ScanState<S: ScanFn> { item: S::OutputItem, next: S }
+pub struct ScanState<S: ScanFn> {
+    item: S::OutputItem,
+    next: S,
+}
 
 pub trait ScanFn: Sized {
     type InputItem;
@@ -11,7 +14,7 @@ pub trait ScanFn: Sized {
     fn map_result(self, result: Self::InputResult) -> Self::OutputResult;
 }
 
-pub struct ScanWrap<S: ScanFn> (S);
+pub struct ScanWrap<S: ScanFn>(S);
 
 impl<S: ScanFn> FlatScanFn for ScanWrap<S> {
     type InputItem = S::InputItem;
@@ -20,7 +23,10 @@ impl<S: ScanFn> FlatScanFn for ScanWrap<S> {
     type EndList = OptionList<S::OutputItem, S::OutputResult>;
     fn map_item(self, input: Self::InputItem) -> Self::OutputList {
         let ScanState { item, next } = self.0.map_input(input);
-        OptionList::Some { item, end: ScanWrap(next) }
+        OptionList::Some {
+            item,
+            end: ScanWrap(next),
+        }
     }
     fn map_result(self, result: Self::InputResult) -> Self::EndList {
         OptionList::End(self.0.map_result(result))
