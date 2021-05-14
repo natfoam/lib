@@ -48,3 +48,10 @@ where
         self.flat_scan(FilterScanWrap(scan))
     }
 }
+
+impl<L> FilterScan for L
+where
+    L: ListFn,
+    L::End: ResultFn,
+{
+}

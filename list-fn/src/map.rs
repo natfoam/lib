@@ -22,3 +22,5 @@ pub trait Map: ListFn {
         self.flat_map(MapWrap(m))
     }
 }
+
+impl<L: ListFn> Map for L {}

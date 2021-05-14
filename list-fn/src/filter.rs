@@ -22,3 +22,5 @@ pub trait Filter: ListFn {
         self.flat_map(FilterWrap(f))
     }
 }
+
+impl<L: ListFn> Filter for L {}

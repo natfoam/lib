@@ -45,3 +45,10 @@ where
         self.flat_scan(ScanWrap(scan))
     }
 }
+
+impl<L> Scan for L
+where
+    Self: ListFn,
+    Self::End: ResultFn,
+{
+}
