@@ -10,9 +10,9 @@ pub trait MapFn {
 pub struct MapWrap<M: MapFn>(M);
 
 impl<M: MapFn> FlatMapFn for MapWrap<M> {
-    type InputItem = M::Input;
-    type ItemList = Option<M::Output>;
-    fn map(&self, input: Self::InputItem) -> Self::ItemList {
+    type Input = M::Input;
+    type OutputList = Option<M::Output>;
+    fn map(&self, input: Self::Input) -> Self::OutputList {
         Some(self.0.map(input))
     }
 }

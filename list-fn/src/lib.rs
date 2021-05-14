@@ -9,7 +9,9 @@ mod map;
 mod option;
 mod result;
 mod take;
+mod filter;
 
+pub use filter::*;
 pub use collect::*;
 pub use empty::*;
 pub use flat_map::*;

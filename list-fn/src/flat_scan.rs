@@ -3,10 +3,10 @@ use super::*;
 pub trait FlatScanFn {
     type InputItem;
     type InputResult;
-    type ItemList: ListFn<End = Self>;
-    type EndList: ListFn<Item = <Self::ItemList as ListFn>::Item>;
+    type OutputList: ListFn<End = Self>;
+    type EndList: ListFn<Item = <Self::OutputList as ListFn>::Item>;
     /// Map the given `input` item into a list.
-    fn map_item(self, input: Self::InputItem) -> Self::ItemList;
+    fn map_item(self, item: Self::InputItem) -> Self::OutputList;
     /// Map the given `result` into an end list.
     fn map_result(self, result: Self::InputResult) -> Self::EndList;
 }
@@ -21,8 +21,8 @@ where
         flat_scan: F,
         input_list: I,
     },
-    ItemList {
-        item_list: F::ItemList,
+    OutputList {
+        output_list: F::OutputList,
         input_list: I,
     },
     EndList(F::EndList),
@@ -34,7 +34,7 @@ where
     F: FlatScanFn<InputItem = I::Item>,
     I::End: ResultFn<Result = F::InputResult>,
 {
-    type Item = <F::ItemList as ListFn>::Item;
+    type Item = <F::OutputList as ListFn>::Item;
     type End = <F::EndList as ListFn>::End;
     fn next(mut self) -> ListState<Self> {
         loop {
@@ -43,23 +43,23 @@ where
                     input_list,
                     flat_scan,
                 } => match input_list.next() {
-                    ListState::Some(first, next) => FlatScanState::ItemList {
-                        item_list: flat_scan.map_item(first),
+                    ListState::Some(first, next) => FlatScanState::OutputList {
+                        output_list: flat_scan.map_item(first),
                         input_list: next,
                     },
                     ListState::End(end) => {
                         FlatScanState::EndList(flat_scan.map_result(end.result()))
                     }
                 },
-                FlatScanState::ItemList {
-                    item_list,
+                FlatScanState::OutputList {
+                    output_list,
                     input_list,
-                } => match item_list.next() {
-                    ListState::Some(first, item_list) => {
+                } => match output_list.next() {
+                    ListState::Some(first, output_list) => {
                         return ListState::Some(
                             first,
-                            FlatScanState::ItemList {
-                                item_list,
+                            FlatScanState::OutputList {
+                                output_list,
                                 input_list,
                             },
                         )
@@ -111,9 +111,9 @@ mod tests {
     impl FlatScanFn for TestFlatScan {
         type InputItem = ();
         type InputResult = ();
-        type ItemList = Empty<(), Self>;
+        type OutputList = Empty<(), Self>;
         type EndList = Empty<(), Self>;
-        fn map_item(self, _: ()) -> Self::ItemList {
+        fn map_item(self, _: ()) -> Self::OutputList {
             Empty::new(self)
         }
         fn map_result(self, _: ()) -> Self::EndList {

@@ -42,8 +42,8 @@ impl<T: UInt> Default for Lsb0FlatMap<T> {
 }
 
 impl<T: UInt> FlatMapFn for Lsb0FlatMap<T> {
-    type InputItem = T;
-    type ItemList = Lsb0List<T>;
+    type Input = T;
+    type OutputList = Lsb0List<T>;
     fn map(&self, item: T) -> Lsb0List<T> {
         Lsb0List::new(item)
     }
