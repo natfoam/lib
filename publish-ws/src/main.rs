@@ -25,15 +25,20 @@ struct CargoToml {
 fn main() {
     let ws_cargo_toml_str = read_to_string("Cargo.toml").unwrap();
     let ws_cargo_toml: WsCargoToml = from_str(&ws_cargo_toml_str).unwrap();
-    let mut map = HashMap::<String, Dependencies>::default();
-    for member in ws_cargo_toml.workspace.members {
-        // don't use `canonicalize`. `cargo` can't handle properly such paths.
-        // For example, `cargo` can't `canonicalize` such path `c:\lib\sha-compress\../fixed-array`.
-        let cargo_toml_file = String::from(".\\") + &member + "\\Cargo.toml";
-        let cargo_toml_str = read_to_string(cargo_toml_file).unwrap();
-        let cargo_toml: CargoToml = from_str(&cargo_toml_str).unwrap();
-        map.insert(member, cargo_toml.dependencies);
-    }
+    let mut map: HashMap<String, Dependencies> = ws_cargo_toml
+        .workspace
+        .members
+        .iter()
+        .map(|member| {
+            let cargo_toml_file = String::from(".\\") + &member + "\\Cargo.toml";
+            let cargo_toml_str = read_to_string(cargo_toml_file).unwrap();
+            let cargo_toml: CargoToml = from_str(&cargo_toml_str).unwrap();
+            (member.clone(), cargo_toml.dependencies)
+        })
+        .collect();
+    // TODO:
+    // 1. check if a package is available after uploading using `cargo search`.
+    // 2. check if a package version is already uploaded.
     while !map.is_empty() {
         let member = map
             .iter()
@@ -42,10 +47,15 @@ fn main() {
                     .iter()
                     .all(|(dependency, _)| !map.contains_key(dependency))
             })
-            .unwrap().0.clone();
+            .unwrap()
+            .0
+            .clone();
         println!("{}", member);
         println!();
         {
+            // don't use `canonicalize`. `canonicalize` returns a UNC path.
+            // https://github.com/rust-lang/rust/issues/42869
+            // `cargo` can't handle properly UNC paths.
             let p = String::from(".\\") + &member;
             let _ = Command::new("cargo")
                 .arg("publish")
