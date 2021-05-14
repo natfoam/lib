@@ -9,6 +9,7 @@ Any `List<End = Self>` is an iterator. Any `&mut Iterator` is a `List<End = Self
 ## Fundamental Operations
 
 - `FlatScan`. An order of items is important.
+  - `FilterScan`
   - `Scan`
   - `Fold`
 - `FlatMap`. An order of items is not important.
