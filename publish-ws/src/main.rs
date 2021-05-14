@@ -29,8 +29,7 @@ fn main() {
     for member in ws_cargo_toml.workspace.members {
         // don't use `canonicalize`. `cargo` can't handle properly such paths.
         // For example, `cargo` can't `canonicalize` such path `c:\lib\sha-compress\../fixed-array`.
-        let p = String::from(".\\") + &member;
-        let cargo_toml_file = p + "\\Cargo.toml";
+        let cargo_toml_file = String::from(".\\") + &member + "\\Cargo.toml";
         let cargo_toml_str = read_to_string(cargo_toml_file).unwrap();
         let cargo_toml: CargoToml = from_str(&cargo_toml_str).unwrap();
         map.insert(member, cargo_toml.dependencies);
