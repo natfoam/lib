@@ -2,7 +2,7 @@
 
 Rust libraries:
 
-- [fixed-array](fixed-array) is a trait for sixed-size arrays.
+- [fixed-array](fixed-array) is a trait for fixed-size arrays.
 - [uints](uints) are traits and extensions for different unsigned integer types.
 - [list-fn](list-fn) is a lazy-list as an alternative to the standard Rust iterator.
 - [bit-list](bit-list) is an LSB-first list of bits.
