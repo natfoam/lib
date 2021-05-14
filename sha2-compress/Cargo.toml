@@ -1,6 +1,6 @@
 [package]
 name = "sha2-compress"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["natfoam"]
 edition = "2018"
 description = "SHA2 compress function"
@@ -11,4 +11,4 @@ repository = "https://github.com/natfoam/lib"
 
 [dependencies]
 uints = { path = "../uints", version = "0.5.0" }
-fixed-array = { path = "../fixed-array", version = "0.1.0" }
+fixed-array = { path = "../fixed-array", version = "0.1.1" }
