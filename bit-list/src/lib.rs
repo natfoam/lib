@@ -1,4 +1,4 @@
-use list_fn::{FlatMapFn, FlatMapList, FlatMap, ListFn, ListState, ResultFn};
+use list_fn::{FlatMap, FlatMapFn, FlatMapList, ListFn, ListState, ResultFn};
 use std::marker::PhantomData;
 use uints::UInt;
 

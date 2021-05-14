@@ -1,27 +1,33 @@
 mod collect;
 mod empty;
+mod filter;
 mod flat_map;
 mod flat_scan;
+mod flatten;
 mod fold;
 mod iter;
 mod list;
 mod map;
 mod option;
+mod option_list;
 mod result;
+mod scan;
 mod take;
-mod filter;
 
-pub use filter::*;
 pub use collect::*;
 pub use empty::*;
+pub use filter::*;
 pub use flat_map::*;
 pub use flat_scan::*;
+pub use flatten::*;
 pub use fold::*;
 pub use iter::*;
 pub use list::*;
 pub use map::*;
 pub use option::*;
+pub use option_list::*;
 pub use result::*;
+pub use scan::*;
 pub use take::*;
 
 #[cfg(test)]
