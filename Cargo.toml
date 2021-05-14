@@ -7,4 +7,5 @@ members = [
     "sha2-compress",
     "fixed-array",
     "u144",
+    "publish-ws",
 ]
