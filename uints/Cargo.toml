@@ -10,4 +10,4 @@ repository = "https://github.com/natfoam/lib"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-fixed-array = { path = "../fixed-array", version = "0.1.0" }
+fixed-array = { path = "../fixed-array", version = "0.1.1" }
