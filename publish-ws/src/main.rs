@@ -15,5 +15,7 @@ struct CargoToml {
 fn main() {
     let cargo_toml_str = read_to_string("Cargo.toml").unwrap();
     let cargo_toml: CargoToml = from_str(&cargo_toml_str).unwrap();
-    println!("{:?}", cargo_toml);
+    for member in cargo_toml.workspace.members {
+        println!("{}", member);    
+    }
 }
