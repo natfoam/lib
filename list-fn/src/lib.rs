@@ -14,7 +14,9 @@ mod option_list;
 mod result;
 mod scan;
 mod take;
+mod end_map;
 
+pub use end_map::*;
 pub use collect::*;
 pub use empty::*;
 pub use filter::*;
