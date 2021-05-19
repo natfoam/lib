@@ -130,7 +130,6 @@ fn main() {
         {
             // TODO:
             // 1. check if a package is available after uploading using `cargo search`.
-            // 2. check if a package version is already uploaded.
             //
             // Note:
             // don't use `canonicalize`. `canonicalize` returns a UNC path.
