@@ -20,4 +20,3 @@ Rust libraries:
   }
   impl<T: ListFn> Fold for T {}
   ```
-.
