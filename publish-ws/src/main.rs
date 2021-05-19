@@ -93,25 +93,6 @@ fn main() {
             }
         }
     }
-    for (name, _) in map.iter() {
-        let x = Command::new("cargo")
-            .arg("search")
-            .arg(name)
-            .arg("--limit")
-            .arg("1")
-            .output()
-            .unwrap();
-        let line = String::from_utf8(x.stdout)
-            .unwrap()
-            .lines()
-            .nth(0)
-            .unwrap()
-            .to_string();
-        println!("{}", line);
-        let x: HashMap<String, String> = from_str(&line).unwrap();
-        let i = x.iter().nth(0).unwrap();
-        println!("{} = {}", i.0, i.1);
-    }
     // Publish dependent packages first.
     while !map.is_empty() {
         let member = map
@@ -126,6 +107,26 @@ fn main() {
         println!("{} = {}", member.0, member.1.package.version);
         let key = member.0.clone();
         println!();
+        let crate_version = {
+            let x = Command::new("cargo")
+                .arg("search")
+                .arg(key.clone())
+                .arg("--limit")
+                .arg("1")
+                .output()
+                .unwrap();
+            let line = String::from_utf8(x.stdout)
+                .unwrap()
+                .lines()
+                .nth(0)
+                .unwrap()
+                .to_string();
+            let x: HashMap<String, String> = from_str(&line).unwrap();
+            let i = x.iter().nth(0).unwrap();
+            println!("crates.io: {} = {}", i.0, i.1);
+            i.1.clone()
+        };
+        if crate_version != member.1.package.version
         {
             // TODO:
             // 1. check if a package is available after uploading using `cargo search`.
