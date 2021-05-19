@@ -43,7 +43,7 @@ where
     Self: ListFn,
     Self::End: ResultFn,
 {
-    fn with_result<E: MapResultFn<Input = <Self::End as ResultFn>::Result>>(
+    fn map_result<E: MapResultFn<Input = <Self::End as ResultFn>::Result>>(
         self,
         map: E,
     ) -> MapResultList<Self, E> {
