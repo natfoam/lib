@@ -10,3 +10,13 @@ Compare to other tools
 ## Limitations
 
 Only for Windows.
+
+## Installation
+
+```
+cargo intall publish-ws
+```
+
+## Usage
+
+Run `publish-ws` in a workspace folder.
