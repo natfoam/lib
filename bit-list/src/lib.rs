@@ -21,7 +21,7 @@ impl<T: UInt> ListFn for Lsb0List<T> {
     type End = ();
     fn next(self) -> ListState<Self> {
         match self.size {
-            0 => ListState::End(Default::default()),
+            0 => ListState::End(()),
             size => ListState::Some(
                 self.value & T::ONE != T::ZERO,
                 Lsb0List {

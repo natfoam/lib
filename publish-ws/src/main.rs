@@ -118,11 +118,11 @@ fn main() {
             let line = String::from_utf8(x.stdout)
                 .unwrap()
                 .lines()
-                .nth(0)
+                .next()
                 .unwrap()
                 .to_string();
             let x: HashMap<String, String> = from_str(&line).unwrap();
-            let i = x.iter().nth(0).unwrap();
+            let i = x.iter().next().unwrap();
             println!("crates.io: {} = {}", i.0, i.1);
             i.1.clone()
         };
