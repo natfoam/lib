@@ -1,26 +1,26 @@
 use super::*;
 
-pub trait EndMapFn {
+pub trait MapResultFn {
     type Input;
     type Output;
     fn map(self, input: Self::Input) -> Self::Output;
 }
 
-pub struct EndMapList<I, E>
+pub struct MapResultList<I, E>
 where
     I: ListFn,
     I::End: ResultFn,
-    E: EndMapFn<Input = <I::End as ResultFn>::Result>,
+    E: MapResultFn<Input = <I::End as ResultFn>::Result>,
 {
     input: I,
-    end_map: E,
+    map: E,
 }
 
-impl<I, E> ListFn for EndMapList<I, E>
+impl<I, E> ListFn for MapResultList<I, E>
 where
     I: ListFn,
     I::End: ResultFn,
-    E: EndMapFn<Input = <I::End as ResultFn>::Result>,
+    E: MapResultFn<Input = <I::End as ResultFn>::Result>,
 {
     type Item = I::Item;
     type End = Id<E::Output>;
@@ -28,33 +28,33 @@ where
         match self.input.next() {
             ListState::Some(input, next) => ListState::Some(
                 input,
-                EndMapList {
+                MapResultList {
                     input: next,
-                    end_map: self.end_map,
+                    map: self.map,
                 },
             ),
-            ListState::End(end) => ListState::End(Id::new(self.end_map.map(end.result()))),
+            ListState::End(end) => ListState::End(Id::new(self.map.map(end.result()))),
         }
     }
 }
 
-pub trait EndMap
+pub trait MapResult
 where
     Self: ListFn,
     Self::End: ResultFn,
 {
-    fn end_map<E: EndMapFn<Input = <Self::End as ResultFn>::Result>>(
+    fn with_result<E: MapResultFn<Input = <Self::End as ResultFn>::Result>>(
         self,
-        end_map: E,
-    ) -> EndMapList<Self, E> {
-        EndMapList {
+        map: E,
+    ) -> MapResultList<Self, E> {
+        MapResultList {
             input: self,
-            end_map,
+            map,
         }
     }
 }
 
-impl<T> EndMap for T
+impl<T> MapResult for T
 where
     T: ListFn,
     T::End: ResultFn,
