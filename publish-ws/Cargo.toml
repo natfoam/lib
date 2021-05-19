@@ -1,6 +1,6 @@
 [package]
 name = "publish-ws"
-version = "0.1.2"
+version = "0.1.3"
 authors = ["natfoam"]
 edition = "2018"
 description = "Publish Workspace Packages"
