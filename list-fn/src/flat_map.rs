@@ -20,22 +20,22 @@ impl<I: ListFn, F: FlatMapFn<Input = I::Item>> ListFn for FlatMapList<I, F> {
         loop {
             match self.output_list {
                 Some(item_list) => match item_list.next() {
-                    ListState::Some(item, next_item_list) => {
-                        return ListState::Some(
-                            item,
-                            FlatMapList {
+                    ListState::Some { first, next } => {
+                        return ListState::Some {
+                            first,
+                            next: FlatMapList {
                                 flat_map: self.flat_map,
                                 input_list: self.input_list,
-                                output_list: Some(next_item_list),
+                                output_list: Some(next),
                             },
-                        )
+                        }
                     }
                     ListState::End(..) => self.output_list = None,
                 },
                 None => match self.input_list.next() {
-                    ListState::Some(input, next_input_list) => {
-                        self.input_list = next_input_list;
-                        self.output_list = Some(self.flat_map.map(input));
+                    ListState::Some { first, next } => {
+                        self.input_list = next;
+                        self.output_list = Some(self.flat_map.map(first));
                     }
                     ListState::End(end) => return ListState::End(end),
                 },

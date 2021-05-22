@@ -126,8 +126,7 @@ fn main() {
             println!("crates.io: {} = {}", i.0, i.1);
             i.1.clone()
         };
-        if crate_version != member.1.package.version
-        {
+        if crate_version != member.1.package.version {
             // TODO:
             // 1. check if a package is available after uploading using `cargo search`.
             // 2. check if package dependencies are updated then the package should have a new version.

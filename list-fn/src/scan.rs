@@ -1,7 +1,7 @@
 use super::*;
 
 pub struct ScanState<S: ScanFn> {
-    item: S::OutputItem,
+    first: S::OutputItem,
     next: S,
 }
 
@@ -22,9 +22,9 @@ impl<S: ScanFn> FlatScanFn for ScanWrap<S> {
     type OutputList = OptionList<S::OutputItem, Self>;
     type EndList = OptionList<S::OutputItem, S::OutputResult>;
     fn map_item(self, input: Self::InputItem) -> Self::OutputList {
-        let ScanState { item, next } = self.0.map_input(input);
+        let ScanState { first, next } = self.0.map_input(input);
         OptionList::Some {
-            item,
+            first,
             end: ScanWrap(next),
         }
     }

@@ -8,13 +8,17 @@ impl ResultFn for () {
     fn result(self) {}
 }
 
-pub struct Id<T> (T);
+pub struct Id<T>(T);
 
 impl<T> ResultFn for Id<T> {
     type Result = T;
-    fn result(self) -> T { self.0 }
+    fn result(self) -> T {
+        self.0
+    }
 }
 
 impl<T> Id<T> {
-    pub fn new(v: T) -> Self { Self(v) }
+    pub fn new(v: T) -> Self {
+        Self(v)
+    }
 }

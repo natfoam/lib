@@ -1,7 +1,7 @@
 use super::*;
 
 pub struct TakeList<L: ListFn> {
-    input: L,
+    next: L,
     count: usize,
 }
 
@@ -12,14 +12,14 @@ impl<L: ListFn> ListFn for TakeList<L> {
         if self.count == 0 {
             ListState::End(())
         } else {
-            match self.input.next() {
-                ListState::Some(first, input) => ListState::Some(
+            match self.next.next() {
+                ListState::Some { first, next } => ListState::Some {
                     first,
-                    TakeList {
-                        input,
+                    next: TakeList {
+                        next,
                         count: self.count - 1,
                     },
-                ),
+                },
                 ListState::End(_) => ListState::End(()),
             }
         }
@@ -28,7 +28,7 @@ impl<L: ListFn> ListFn for TakeList<L> {
 
 pub trait Take: ListFn {
     fn take(self, count: usize) -> TakeList<Self> {
-        TakeList { input: self, count }
+        TakeList { next: self, count }
     }
 }
 

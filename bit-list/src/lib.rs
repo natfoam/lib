@@ -22,13 +22,13 @@ impl<T: UInt> ListFn for Lsb0List<T> {
     fn next(self) -> ListState<Self> {
         match self.size {
             0 => ListState::End(()),
-            size => ListState::Some(
-                self.value & T::ONE != T::ZERO,
-                Lsb0List {
+            size => ListState::Some {
+                first: self.value & T::ONE != T::ZERO,
+                next: Lsb0List {
                     value: self.value >> 1,
                     size: size - 1,
                 },
-            ),
+            },
         }
     }
 }

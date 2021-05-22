@@ -9,14 +9,13 @@ mod fold;
 mod iter;
 mod list;
 mod map;
+mod map_result;
 mod option;
 mod option_list;
 mod result;
 mod scan;
 mod take;
-mod map_result;
 
-pub use map_result::*;
 pub use collect::*;
 pub use empty::*;
 pub use filter::*;
@@ -28,6 +27,7 @@ pub use fold::*;
 pub use iter::*;
 pub use list::*;
 pub use map::*;
+pub use map_result::*;
 pub use option::*;
 pub use option_list::*;
 pub use result::*;
@@ -52,7 +52,7 @@ mod tests {
             let first = *self.0;
             if first < 10 {
                 *self.0 += 1;
-                ListState::Some(first, self)
+                ListState::Some { first, next: self }
             } else {
                 ListState::End(self)
             }
@@ -72,7 +72,10 @@ mod tests {
         fn next(self) -> ListState<Self> {
             let first = self.0;
             if first < 10 {
-                ListState::Some(first, Self(first + 1))
+                ListState::Some {
+                    first,
+                    next: Self(first + 1),
+                }
             } else {
                 ListState::End(self)
             }

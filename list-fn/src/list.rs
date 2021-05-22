@@ -1,7 +1,7 @@
 /// A list.
 pub enum ListState<F: ListFn> {
     /// The list has one item and a function to get a next sub list.
-    Some(F::Item, F),
+    Some { first: F::Item, next: F },
     /// The end of the list.
     End(F::End),
 }

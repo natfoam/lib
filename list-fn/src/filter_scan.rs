@@ -1,7 +1,7 @@
 use super::*;
 
 pub struct FilterScanState<S: FilterScanFn> {
-    item: Option<S::OutputItem>,
+    first: Option<S::OutputItem>,
     next: S,
 }
 
@@ -22,10 +22,10 @@ impl<S: FilterScanFn> FlatScanFn for FilterScanWrap<S> {
     type OutputList = OptionList<S::OutputItem, Self>;
     type EndList = OptionList<S::OutputItem, S::OutputResult>;
     fn map_item(self, input: Self::InputItem) -> Self::OutputList {
-        let FilterScanState { item, next } = self.0.map_input(input);
+        let FilterScanState { first, next } = self.0.map_input(input);
         let end = FilterScanWrap(next);
-        match item {
-            Some(item) => OptionList::Some { item, end },
+        match first {
+            Some(first) => OptionList::Some { first, end },
             None => OptionList::End(end),
         }
     }
