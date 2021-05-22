@@ -1,5 +1,3 @@
-use crate::ListSome;
-
 use super::*;
 
 pub enum OptionList<I, E> {

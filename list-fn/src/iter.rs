@@ -1,5 +1,3 @@
-use crate::ListSome;
-
 use super::*;
 use take_mut::take;
 

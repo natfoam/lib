@@ -1,5 +1,3 @@
-use crate::ListSome;
-
 use super::*;
 
 /// Option as a list.

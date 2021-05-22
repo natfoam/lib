@@ -1,8 +1,8 @@
 use super::*;
 
 pub struct ScanState<S: ScanFn> {
-    first: S::OutputItem,
-    next: S,
+    pub first: S::OutputItem,
+    pub next: S,
 }
 
 pub trait ScanFn: Sized {

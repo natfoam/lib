@@ -1,5 +1,3 @@
-use crate::ListSome;
-
 use super::*;
 
 pub struct TakeList<L: ListFn> {

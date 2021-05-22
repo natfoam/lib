@@ -1,40 +1,42 @@
-use crate::ListSome;
+use std::marker::PhantomData;
 
 use super::*;
 
-struct CollectState<I: ListFn> {
-    result: Vec<I::Item>,
-    next: I,
-}
+pub struct CollectState<T, E>(Vec<T>, PhantomData<E>);
 
-impl<I: ListFn> ListFn for CollectState<I> {
-    type Item = ();
-    type End = Vec<I::Item>;
-    fn next(mut self) -> ListState<Self> {
-        match self.next.next() {
-            ListState::Some(ListSome { first, next }) => {
-                self.result.push(first);
-                ListState::Some(ListSome {
-                    first: (),
-                    next: CollectState {
-                        result: self.result,
-                        next,
-                    },
-                })
-            }
-            ListState::End(..) => ListState::End(self.result),
-        }
-    }
-}
+impl<T, E> ScanFn for CollectState<T, E> {
+    type InputItem = T;
+    type InputResult = E;
+    type OutputItem = ();
+    type OutputResult = Vec<T>;
 
-pub trait Collect: ListFn {
-    fn collect(self) -> Vec<Self::Item> {
-        CollectState {
-            result: Vec::new(),
+    fn map_input(mut self, input: Self::InputItem) -> ScanState<Self> {
+        self.0.push(input);
+        ScanState {
+            first: (),
             next: self,
         }
-        .fold()
+    }
+
+    fn map_result(self, _: Self::InputResult) -> Self::OutputResult {
+        self.0
     }
 }
 
-impl<L: ListFn> Collect for L {}
+pub trait Collect
+where
+    Self: ListFn,
+    Self::End: ResultFn,
+{
+    fn collect(self) -> Vec<Self::Item> {
+        self.scan(CollectState(Vec::new(), PhantomData::default()))
+            .fold()
+    }
+}
+
+impl<L> Collect for L
+where
+    Self: ListFn,
+    Self::End: ResultFn,
+{
+}
