@@ -13,13 +13,13 @@ impl<L: ListFn> ListFn for TakeList<L> {
             ListState::End(())
         } else {
             match self.next.next() {
-                ListState::Some(ListSome { first, next }) => ListState::Some(ListSome {
-                    first,
-                    next: TakeList {
-                        next,
+                ListState::Some(some) => ListState::some(
+                    some.first,
+                    TakeList {
+                        next: some.next,
                         count: self.count - 1,
                     },
-                }),
+                ),
                 ListState::End(_) => ListState::End(()),
             }
         }

@@ -26,13 +26,13 @@ where
     type End = Id<E::Output>;
     fn next(self) -> ListState<Self> {
         match self.input.next() {
-            ListState::Some(ListSome { first, next }) => ListState::Some(ListSome {
-                first,
-                next: MapResultList {
-                    input: next,
+            ListState::Some(some) => ListState::some(
+                some.first,
+                MapResultList {
+                    input: some.next,
                     map: self.map,
                 },
-            }),
+            ),
             ListState::End(end) => ListState::End(Id::new(self.map.map(end.result()))),
         }
     }

@@ -43,9 +43,9 @@ where
                     input_list,
                     flat_scan,
                 } => match input_list.next() {
-                    ListState::Some(ListSome { first, next }) => FlatScanState::OutputList {
-                        output_list: flat_scan.map_item(first),
-                        input_list: next,
+                    ListState::Some(some) => FlatScanState::OutputList {
+                        output_list: flat_scan.map_item(some.first),
+                        input_list: some.next,
                     },
                     ListState::End(end) => {
                         FlatScanState::EndList(flat_scan.map_result(end.result()))
@@ -55,14 +55,14 @@ where
                     output_list,
                     input_list,
                 } => match output_list.next() {
-                    ListState::Some(ListSome { first, next }) => {
-                        return ListState::Some(ListSome {
-                            first,
-                            next: FlatScanState::OutputList {
-                                output_list: next,
+                    ListState::Some(some) => {
+                        return ListState::some(
+                            some.first,
+                            FlatScanState::OutputList {
+                                output_list: some.next,
                                 input_list,
                             },
-                        })
+                        )
                     }
                     ListState::End(flat_scan) => FlatScanState::Begin {
                         input_list,
@@ -71,10 +71,9 @@ where
                 },
                 FlatScanState::EndList(end_list) => {
                     return match end_list.next() {
-                        ListState::Some(ListSome { first, next }) => ListState::Some(ListSome {
-                            first,
-                            next: FlatScanState::EndList(next),
-                        }),
+                        ListState::Some(some) => {
+                            ListState::some(some.first, FlatScanState::EndList(some.next))
+                        }
                         ListState::End(end) => ListState::End(end),
                     }
                 }

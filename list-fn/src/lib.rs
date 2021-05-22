@@ -54,7 +54,7 @@ mod tests {
             let first = *self.0;
             if first < 10 {
                 *self.0 += 1;
-                ListState::Some(ListSome { first, next: self })
+                ListState::some(first, self)
             } else {
                 ListState::End(self)
             }
@@ -74,10 +74,7 @@ mod tests {
         fn next(self) -> ListState<Self> {
             let first = self.0;
             if first < 10 {
-                ListState::Some(ListSome {
-                    first,
-                    next: Self(first + 1),
-                })
+                ListState::some(first, Self(first + 1))
             } else {
                 ListState::End(self)
             }

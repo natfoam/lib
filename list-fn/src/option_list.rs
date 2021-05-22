@@ -10,10 +10,7 @@ impl<I, E> ListFn for OptionList<I, E> {
     type End = E;
     fn next(self) -> ListState<Self> {
         match self {
-            OptionList::Some { first, end } => ListState::Some(ListSome {
-                first,
-                next: OptionList::End(end),
-            }),
+            OptionList::Some { first, end } => ListState::some(first, OptionList::End(end)),
             OptionList::End(end) => ListState::End(end),
         }
     }

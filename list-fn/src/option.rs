@@ -6,10 +6,7 @@ impl<T> ListFn for Option<T> {
     type End = Self;
     fn next(self) -> ListState<Self> {
         match self {
-            Option::Some(first) => ListState::Some(ListSome {
-                first,
-                next: Option::None,
-            }),
+            Option::Some(first) => ListState::some(first, Option::None),
             Option::None => ListState::End(Option::None),
         }
     }
