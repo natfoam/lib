@@ -1,3 +1,5 @@
+use crate::ListSome;
+
 use super::*;
 
 pub trait MapResultFn {
@@ -26,13 +28,13 @@ where
     type End = Id<E::Output>;
     fn next(self) -> ListState<Self> {
         match self.input.next() {
-            ListState::Some { first, next } => ListState::Some {
+            ListState::Some(ListSome { first, next }) => ListState::Some(ListSome {
                 first,
                 next: MapResultList {
                     input: next,
                     map: self.map,
                 },
-            },
+            }),
             ListState::End(end) => ListState::End(Id::new(self.map.map(end.result()))),
         }
     }

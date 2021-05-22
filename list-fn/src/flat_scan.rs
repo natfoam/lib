@@ -1,3 +1,5 @@
+use crate::ListSome;
+
 use super::*;
 
 pub trait FlatScanFn {
@@ -43,7 +45,7 @@ where
                     input_list,
                     flat_scan,
                 } => match input_list.next() {
-                    ListState::Some { first, next } => FlatScanState::OutputList {
+                    ListState::Some(ListSome { first, next }) => FlatScanState::OutputList {
                         output_list: flat_scan.map_item(first),
                         input_list: next,
                     },
@@ -55,14 +57,14 @@ where
                     output_list,
                     input_list,
                 } => match output_list.next() {
-                    ListState::Some { first, next } => {
-                        return ListState::Some {
+                    ListState::Some(ListSome { first, next }) => {
+                        return ListState::Some(ListSome {
                             first,
                             next: FlatScanState::OutputList {
                                 output_list: next,
                                 input_list,
                             },
-                        }
+                        })
                     }
                     ListState::End(flat_scan) => FlatScanState::Begin {
                         input_list,
@@ -71,10 +73,10 @@ where
                 },
                 FlatScanState::EndList(end_list) => {
                     return match end_list.next() {
-                        ListState::Some { first, next } => ListState::Some {
+                        ListState::Some(ListSome { first, next }) => ListState::Some(ListSome {
                             first,
                             next: FlatScanState::EndList(next),
-                        },
+                        }),
                         ListState::End(end) => ListState::End(end),
                     }
                 }

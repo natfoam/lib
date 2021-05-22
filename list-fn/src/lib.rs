@@ -36,6 +36,8 @@ pub use take::*;
 
 #[cfg(test)]
 mod tests {
+    use crate::ListSome;
+
     use super::*;
 
     struct Ref<'a>(&'a mut u32);
@@ -52,7 +54,7 @@ mod tests {
             let first = *self.0;
             if first < 10 {
                 *self.0 += 1;
-                ListState::Some { first, next: self }
+                ListState::Some(ListSome { first, next: self })
             } else {
                 ListState::End(self)
             }
@@ -72,10 +74,10 @@ mod tests {
         fn next(self) -> ListState<Self> {
             let first = self.0;
             if first < 10 {
-                ListState::Some {
+                ListState::Some(ListSome {
                     first,
                     next: Self(first + 1),
-                }
+                })
             } else {
                 ListState::End(self)
             }

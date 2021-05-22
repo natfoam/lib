@@ -1,3 +1,5 @@
+use crate::ListSome;
+
 use super::*;
 
 pub struct TakeList<L: ListFn> {
@@ -13,13 +15,13 @@ impl<L: ListFn> ListFn for TakeList<L> {
             ListState::End(())
         } else {
             match self.next.next() {
-                ListState::Some { first, next } => ListState::Some {
+                ListState::Some(ListSome { first, next }) => ListState::Some(ListSome {
                     first,
                     next: TakeList {
                         next,
                         count: self.count - 1,
                     },
-                },
+                }),
                 ListState::End(_) => ListState::End(()),
             }
         }

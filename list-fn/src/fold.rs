@@ -4,7 +4,7 @@ pub trait Fold: ListFn {
     fn fold(mut self) -> Self::End {
         loop {
             match self.next() {
-                ListState::Some { next, .. } => self = next,
+                ListState::Some(ListSome { next, .. }) => self = next,
                 ListState::End(end) => return end,
             }
         }

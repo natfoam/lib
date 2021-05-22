@@ -1,3 +1,5 @@
+use crate::ListSome;
+
 use super::*;
 
 /// Option as a list.
@@ -6,10 +8,10 @@ impl<T> ListFn for Option<T> {
     type End = Self;
     fn next(self) -> ListState<Self> {
         match self {
-            Option::Some(first) => ListState::Some {
+            Option::Some(first) => ListState::Some(ListSome {
                 first,
                 next: Option::None,
-            },
+            }),
             Option::None => ListState::End(Option::None),
         }
     }

@@ -1,4 +1,4 @@
-use list_fn::{FlatMap, FlatMapFn, FlatMapList, ListFn, ListState, ResultFn};
+use list_fn::{FlatMap, FlatMapFn, FlatMapList, ListFn, ListState, ResultFn, ListSome};
 use std::marker::PhantomData;
 use uints::UInt;
 
@@ -22,13 +22,13 @@ impl<T: UInt> ListFn for Lsb0List<T> {
     fn next(self) -> ListState<Self> {
         match self.size {
             0 => ListState::End(()),
-            size => ListState::Some {
+            size => ListState::Some(ListSome {
                 first: self.value & T::ONE != T::ZERO,
                 next: Lsb0List {
                     value: self.value >> 1,
                     size: size - 1,
                 },
-            },
+            }),
         }
     }
 }

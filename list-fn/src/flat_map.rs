@@ -1,3 +1,5 @@
+use crate::ListSome;
+
 use super::*;
 
 pub trait FlatMapFn {
@@ -20,20 +22,20 @@ impl<I: ListFn, F: FlatMapFn<Input = I::Item>> ListFn for FlatMapList<I, F> {
         loop {
             match self.output_list {
                 Some(item_list) => match item_list.next() {
-                    ListState::Some { first, next } => {
-                        return ListState::Some {
+                    ListState::Some(ListSome { first, next }) => {
+                        return ListState::Some(ListSome {
                             first,
                             next: FlatMapList {
                                 flat_map: self.flat_map,
                                 input_list: self.input_list,
                                 output_list: Some(next),
                             },
-                        }
+                        })
                     }
                     ListState::End(..) => self.output_list = None,
                 },
                 None => match self.input_list.next() {
-                    ListState::Some { first, next } => {
+                    ListState::Some(ListSome { first, next }) => {
                         self.input_list = next;
                         self.output_list = Some(self.flat_map.map(first));
                     }

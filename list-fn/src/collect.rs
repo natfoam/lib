@@ -1,3 +1,5 @@
+use crate::ListSome;
+
 use super::*;
 
 struct CollectState<I: ListFn> {
@@ -10,15 +12,15 @@ impl<I: ListFn> ListFn for CollectState<I> {
     type End = Vec<I::Item>;
     fn next(mut self) -> ListState<Self> {
         match self.next.next() {
-            ListState::Some { first, next } => {
+            ListState::Some(ListSome { first, next }) => {
                 self.result.push(first);
-                ListState::Some {
+                ListState::Some(ListSome {
                     first: (),
                     next: CollectState {
                         result: self.result,
                         next,
                     },
-                }
+                })
             }
             ListState::End(..) => ListState::End(self.result),
         }
