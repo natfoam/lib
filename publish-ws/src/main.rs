@@ -6,6 +6,8 @@ use serde_derive::Deserialize;
 use std::{collections::HashMap, fmt, fmt::Formatter, fs::read_to_string, process::Command};
 use toml::from_str;
 
+const SLASH: &str = if cfg!(windows) { "\\" } else { "/" };
+
 #[derive(Deserialize, Debug)]
 struct Workspace {
     members: Vec<String>,
@@ -73,7 +75,7 @@ fn main() {
         .members
         .iter()
         .map(|member| {
-            let cargo_toml_file = String::from(".\\") + &member + "\\Cargo.toml";
+            let cargo_toml_file = String::from(".") + SLASH + &member + SLASH + "Cargo.toml";
             let cargo_toml_str = read_to_string(cargo_toml_file).unwrap();
             let cargo_toml: CargoToml = from_str(&cargo_toml_str).unwrap();
             (member.clone(), cargo_toml)
@@ -136,7 +138,7 @@ fn main() {
             // don't use `canonicalize`. `canonicalize` returns a UNC path.
             // https://github.com/rust-lang/rust/issues/42869
             // `cargo` can't handle properly UNC paths.
-            let p = String::from(".\\") + &key;
+            let p = String::from(".") + SLASH + &key;
             let _ = Command::new("cargo")
                 .arg("publish")
                 .current_dir(p)
