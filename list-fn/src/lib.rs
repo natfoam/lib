@@ -36,8 +36,6 @@ pub use take::*;
 
 #[cfg(test)]
 mod tests {
-    use crate::ListSome;
-
     use super::*;
 
     struct Ref<'a>(&'a mut u32);
