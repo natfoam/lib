@@ -6,8 +6,8 @@ Rust libraries:
 - [uints](uints) are traits and extensions for different unsigned integer types.
 - [list-fn](list-fn) is a lazy-list as an alternative to the standard Rust iterator.
 - [bit-list](bit-list) is an LSB-first list of bits.
-- [sha2-compress](sha2-compress) is an SHA2 compress function.
 - [u144](u144) is an unsigned integer 144 bit. For example, to store 137 bit blocks 🙄.
+- [sha2-compress](sha2-compress) is an SHA2 compress function.
 - [publish-ws](publish-ws) is a tool for publishing all workspace packages.
 
 ## Conventions
