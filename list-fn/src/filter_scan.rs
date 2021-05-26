@@ -1,9 +1,8 @@
 use super::*;
 
-pub struct FilterScanState<S: FilterScanFn> {
-    first: Option<S::OutputItem>,
-    next: S,
-}
+pub struct FilterScanWrap<S: FilterScanFn>(S);
+
+pub type FilterScanState<S> = OptionList<<S as FilterScanFn>::OutputItem, FilterScanWrap<S>>;
 
 pub trait FilterScanFn: Sized {
     type InputItem;
@@ -14,20 +13,13 @@ pub trait FilterScanFn: Sized {
     fn map_result(self, result: Self::InputResult) -> Self::OutputResult;
 }
 
-pub struct FilterScanWrap<S: FilterScanFn>(S);
-
 impl<S: FilterScanFn> FlatScanFn for FilterScanWrap<S> {
     type InputItem = S::InputItem;
     type InputResult = S::InputResult;
     type OutputList = OptionList<S::OutputItem, Self>;
     type EndList = OptionList<S::OutputItem, S::OutputResult>;
     fn map_item(self, input: Self::InputItem) -> Self::OutputList {
-        let FilterScanState { first, next } = self.0.map_input(input);
-        let end = FilterScanWrap(next);
-        match first {
-            Some(first) => OptionList::Some { first, end },
-            None => OptionList::End(end),
-        }
+        self.0.map_input(input)
     }
     fn map_result(self, result: Self::InputResult) -> Self::EndList {
         OptionList::End(self.0.map_result(result))

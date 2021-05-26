@@ -1,6 +1,6 @@
 [package]
 name = "list-fn"
-version = "0.14.1"
+version = "0.15.0"
 authors = ["natfoam"]
 edition = "2018"
 description = "A generic lazy list"
