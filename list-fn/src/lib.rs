@@ -89,7 +89,7 @@ mod tests {
     #[test]
     fn as_range() {
         let v = Range10(0).collect();
-        assert_eq!(v, vec![0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+        assert_eq!(v.0, vec![0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
     }
 
     #[test]

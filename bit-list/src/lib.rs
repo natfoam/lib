@@ -76,7 +76,7 @@ mod tests {
     fn it_works() {
         let a: &[u8] = &[1, 2];
         assert_eq!(
-            a.iter().cloned().lsb0().collect(),
+            a.iter().cloned().lsb0().collect().0,
             vec!(
                 true, false, false, false, false, false, false, false, false, true, false, false,
                 false, false, false, false
@@ -84,7 +84,7 @@ mod tests {
         );
         let v: Vec<u8> = vec![3, 4];
         assert_eq!(
-            v.into_iter().lsb0().collect(),
+            v.into_iter().lsb0().collect().0,
             vec!(
                 true, true, false, false, false, false, false, false, false, false, true, false,
                 false, false, false, false
