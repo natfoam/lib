@@ -6,6 +6,8 @@ The lazy list can be used as an immutable alternative to the standard Rust itera
 
 Any `List<End = Self>` is an iterator. Any `&mut Iterator` is a `List<End = Self>`.
 
+See also [Generators](https://doc.rust-lang.org/std/ops/trait.Generator.html).
+
 ## Fundamental Operations
 
 - `FlatScan`. An order of items is important.
