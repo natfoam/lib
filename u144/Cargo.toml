@@ -1,6 +1,6 @@
 [package]
 name = "u144"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["natfoam"]
 edition = "2018"
 description = "Unsigned Integer 144 bits"
@@ -10,4 +10,4 @@ repository = "https://github.com/natfoam/lib"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-uints = { path = "../uints", version = "0.5.1" }
+uints = { path = "../uints", version = "0.6.0" }

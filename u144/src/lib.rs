@@ -110,6 +110,12 @@ impl Number for U144 {
 mod tests {
     use super::*;
     #[test]
+    fn log2_test() {
+        assert_eq!(U144::new(0, 1).log2(), 0);
+        assert_eq!(U144::new(0, 4).log2(), 2);
+        assert_eq!(U144::new(1, 0).log2(), 16);
+    }
+    #[test]
     fn leading_zeros() {
         assert_eq!(U144::default().leading_zeros(), 144);
         assert_eq!(U144::new(u128::MAX, 0).leading_zeros(), 0);

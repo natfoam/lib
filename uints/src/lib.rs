@@ -16,6 +16,9 @@ pub trait Common: Default + PartialOrd + Debug {
     fn trailing_zeros(&self) -> u8;
     fn count_ones(&self) -> u8;
     fn lsb0_array(&self) -> Self::Array;
+    fn log2(&self) -> u8 {
+        Self::BITS - 1 - self.leading_zeros()
+    }
 }
 
 pub trait UInt:
@@ -250,5 +253,17 @@ impl Number for u8 {
         let result = *self & m;
         *self &= u8::MAX - m;
         result
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn log2() {
+        assert_eq!(1u32.log2(), 0);
+        assert_eq!(2u32.log2(), 1);
+        assert_eq!(3u32.log2(), 1);
+        assert_eq!(4u32.log2(), 2);
     }
 }
