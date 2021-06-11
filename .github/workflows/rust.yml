@@ -16,7 +16,8 @@ jobs:
 
     strategy:
       matrix:
-        os: [windows-latest, ubuntu-latest, macos-latest]
+        # https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idruns-on
+        os: [windows-latest, ubuntu-latest, macos-11]
 
     steps:
     - uses: actions/checkout@v2
