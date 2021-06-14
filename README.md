@@ -20,3 +20,10 @@ Rust libraries:
   }
   impl<T: ListFn> Fold for T {}
   ```
+  An alternative is to use `Sugar` suffix:
+  ```rust
+  trait FoldSugar: ListFn {
+      fn fold(self) -> Self::End { ... }
+  }
+  impl<T: ListFn> FoldSugar for T {}
+  ```
