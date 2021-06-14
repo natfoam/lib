@@ -2,19 +2,13 @@ use uints::{u128_new, u16_new, Common, Number};
 
 #[derive(Debug, PartialEq, PartialOrd, Default)]
 pub struct U144 {
-    hi: u128,
-    lo: u16,
+    pub hi: u128,
+    pub lo: u16,
 }
 
 impl U144 {
     pub const fn new(hi: u128, lo: u16) -> Self {
         Self { hi, lo }
-    }
-    pub const fn hi(&self) -> u128 {
-        self.hi
-    }
-    pub const fn lo(&self) -> u16 {
-        self.lo
     }
 }
 
@@ -137,24 +131,24 @@ mod tests {
         let mut v = U144::default();
         v.add(0xFFFF);
         v.add(0xFFFF);
-        assert_eq!(v.hi(), 1);
-        assert_eq!(v.lo(), 0xFFFE);
+        assert_eq!(v.hi, 1);
+        assert_eq!(v.lo, 0xFFFE);
         v.add(1);
-        assert_eq!(v.hi(), 1);
-        assert_eq!(v.lo(), 0xFFFF);
+        assert_eq!(v.hi, 1);
+        assert_eq!(v.lo, 0xFFFF);
         v.add(1);
-        assert_eq!(v.hi(), 2);
-        assert_eq!(v.lo(), 0);
+        assert_eq!(v.hi, 2);
+        assert_eq!(v.lo, 0);
     }
     #[test]
     fn subtract() {
         let mut v = U144::new(0x10, 0x0);
         v.subtract(0xFF);
-        assert_eq!(v.hi(), 0xF);
-        assert_eq!(v.lo(), 0xFF01);
+        assert_eq!(v.hi, 0xF);
+        assert_eq!(v.lo, 0xFF01);
         v.subtract(1);
-        assert_eq!(v.hi(), 0xF);
-        assert_eq!(v.lo(), 0xFF00);
+        assert_eq!(v.hi, 0xF);
+        assert_eq!(v.lo, 0xFF00);
     }
     #[test]
     fn set() {
