@@ -133,6 +133,7 @@ fn main() {
             // 1. check if a package is available after uploading using `cargo search`.
             // 2. check if package dependencies are updated then the package should have a new version.
             // 3. check if the package is changed (using Git and a commit id from crates.io) (we need to include a commit id into package metadata)
+            // 4. check if all changes are committed. It looks like Cargo checks only package changes.
             //
             // Note:
             // don't use `canonicalize`. `canonicalize` returns a UNC path.
