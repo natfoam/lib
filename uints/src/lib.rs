@@ -108,6 +108,35 @@ pub const fn u16_new(v: u16) -> U16 {
     [v as u8, (v >> 8) as u8]
 }
 
+impl Common for u16 {
+    const ZERO: u16 = 0;
+    const ONE: u16 = 1;
+    const MAX: u16 = u16::MAX;
+    type Array = [u8; 2];
+    fn leading_zeros(&self) -> u8 {
+        u16::leading_zeros(*self) as u8
+    }
+    fn trailing_zeros(&self) -> u8 {
+        u16::trailing_zeros(*self) as u8
+    }
+    fn count_ones(&self) -> u8 {
+        u16::count_ones(*self) as u8
+    }
+    fn lsb0_array(&self) -> [u8; 2] {
+        let x = u16_new(*self);
+        [x[0], x[1]]
+    }
+}
+
+impl UInt for u16 {
+    fn ror(self, i: u32) -> Self {
+        self.rotate_right(i)
+    }
+    fn overflow_add(self, v: Self) -> Self {
+        self.overflowing_add(v).0
+    }
+}
+
 pub type U32 = [U16; 2];
 
 pub const fn u32_new(v: u32) -> U32 {
