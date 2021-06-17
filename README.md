@@ -27,3 +27,31 @@ Rust libraries:
   }
   impl<T: ListFn> FoldSugar for T {}
   ```
+
+## Rust Wish List
+
+- `const fn` in traits. For example
+  ```rust
+  trait X {
+      const fn x() -> X;
+  }
+  ```
+- default types in traits
+  ```rust
+  trait X {
+      type M = u8
+  }
+  ```
+- `impl Type` in traits almost like `dyn`.
+  ```rust
+  trait X {
+      type M = impl R;
+  }
+  ```
+- defining arrays in traits using parameters
+  ```rust
+  trait X<const N: usize> {
+      fn x() -> [u8; N];
+  }
+  ```
+- Generators. See [genawaiter](https://crates.io/crates/genawaiter) as an example.

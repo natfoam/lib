@@ -25,3 +25,15 @@ pub trait ListFn: Sized {
     /// The main function which returns a list.
     fn next(self) -> ListState<Self>;
 }
+    
+pub trait RefListFn<I, E> {
+    fn ref_next(&self) -> ListState<&dyn RefListFn<I, E>>;
+}
+
+impl<I, E> ListFn for &dyn RefListFn<I, E> {
+    type Item = I;
+    type End = E;
+    fn next(self) -> ListState<Self> {
+        self.ref_next()
+    }
+}
