@@ -16,6 +16,12 @@ impl<T: UInt> BitVec<T> {
             size: T::BITS,
         }
     }
+    pub fn concat(self, v: Self) -> Self {
+        BitVec {
+            array: self.array | (v.array << self.size),
+            size: self.size + v.size,
+        }
+    }
 }
 
 impl<T: UInt> Default for BitVec<T> {
