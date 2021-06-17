@@ -121,8 +121,7 @@ fn main() {
                 .unwrap()
                 .lines()
                 .next()
-                .unwrap()
-                .to_string();
+                .map_or(key.clone() + " = \"\"", |v| v.to_string());
             let x: HashMap<String, String> = from_str(&line).unwrap();
             let i = x.iter().next().unwrap();
             println!("crates.io: {} = {}", i.0, i.1);

@@ -3,6 +3,9 @@ name = "lim-bit-vec"
 version = "0.1.0"
 authors = ["natfoam"]
 edition = "2018"
+description = "Limited bit vectors"
+license = "Apache-2.0"
+repository = "https://github.com/natfoam/lib"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
