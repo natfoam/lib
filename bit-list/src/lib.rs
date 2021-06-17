@@ -3,7 +3,7 @@ use std::marker::PhantomData;
 use uints::UInt;
 
 // LSB first bit vector.
-#[derive(Clone)]
+#[derive(Clone, Copy)]
 pub struct BitVec<T: UInt> {
     pub array: T,
     pub size: u8,
