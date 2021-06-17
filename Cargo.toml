@@ -6,6 +6,7 @@ members = [
     "bit-list",
     "sha2-compress",
     "fixed-array",
+    "lim-bit-vec",
     "u144",
     "publish-ws",
 ]
