@@ -10,11 +10,11 @@ pub struct BitVec<T: UInt> {
 }
 
 impl<T: UInt> BitVec<T> {
-    fn new(array: T) -> Self {
-        BitVec {
-            array,
-            size: T::BITS,
-        }
+    pub fn new_full(array: T) -> Self {
+        Self::new(array, T::BITS)
+    }
+    pub fn new(array: T, size: u8) -> Self {
+        BitVec { array, size }
     }
     pub fn concat(self, v: Self) -> Self {
         BitVec {
@@ -62,7 +62,7 @@ impl<T: UInt> FlatMapFn for Lsb0FlatMap<T> {
     type Input = T;
     type OutputList = BitVec<T>;
     fn map(&self, item: T) -> BitVec<T> {
-        BitVec::new(item)
+        BitVec::new_full(item)
     }
 }
 
