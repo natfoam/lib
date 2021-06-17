@@ -5,8 +5,8 @@ use uints::UInt;
 // LSB first bit vector.
 #[derive(Clone)]
 pub struct BitVec<T: UInt> {
-    array: T,
-    size: u8,
+    pub array: T,
+    pub size: u8,
 }
 
 impl<T: UInt> BitVec<T> {
