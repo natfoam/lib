@@ -2,30 +2,31 @@ use list_fn::{FlatMap, FlatMapFn, FlatMapList, ListFn, ListState, ResultFn, List
 use std::marker::PhantomData;
 use uints::UInt;
 
-pub struct Lsb0List<T: UInt> {
-    value: T,
+// LSB first bit vector.
+pub struct BitVec<T: UInt> {
+    array: T,
     size: u8,
 }
 
-impl<T: UInt> Lsb0List<T> {
-    fn new(value: T) -> Self {
-        Lsb0List {
-            value,
+impl<T: UInt> BitVec<T> {
+    fn new(array: T) -> Self {
+        BitVec {
+            array,
             size: T::BITS,
         }
     }
 }
 
-impl<T: UInt> ListFn for Lsb0List<T> {
+impl<T: UInt> ListFn for BitVec<T> {
     type Item = bool;
     type End = ();
     fn next(self) -> ListState<Self> {
         match self.size {
             0 => ListState::End(()),
             size => ListState::Some(ListSome {
-                first: self.value & T::ONE != T::ZERO,
-                next: Lsb0List {
-                    value: self.value >> 1,
+                first: self.array & T::ONE != T::ZERO,
+                next: BitVec {
+                    array: self.array >> 1,
                     size: size - 1,
                 },
             }),
@@ -43,9 +44,9 @@ impl<T: UInt> Default for Lsb0FlatMap<T> {
 
 impl<T: UInt> FlatMapFn for Lsb0FlatMap<T> {
     type Input = T;
-    type OutputList = Lsb0List<T>;
-    fn map(&self, item: T) -> Lsb0List<T> {
-        Lsb0List::new(item)
+    type OutputList = BitVec<T>;
+    fn map(&self, item: T) -> BitVec<T> {
+        BitVec::new(item)
     }
 }
 
