@@ -3,7 +3,7 @@ use std::marker::PhantomData;
 use uints::UInt;
 
 // LSB first bit vector.
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, PartialEq, Default)]
 pub struct BitVec<T: UInt> {
     pub array: T,
     pub size: u8,
@@ -20,15 +20,6 @@ impl<T: UInt> BitVec<T> {
         BitVec {
             array: self.array | (v.array << self.size),
             size: self.size + v.size,
-        }
-    }
-}
-
-impl<T: UInt> Default for BitVec<T> {
-    fn default() -> Self {
-        BitVec {
-            array: T::ZERO,
-            size: 0,
         }
     }
 }
