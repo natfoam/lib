@@ -1,4 +1,4 @@
-use list_fn::{FlatMap, FlatMapFn, FlatMapList, ListFn, ListState, ResultFn, ListSome};
+use list_fn::{FlatMap, FlatMapFn, FlatMapList, ListFn, ListSome, ListState, ResultFn};
 use std::marker::PhantomData;
 use uints::UInt;
 
@@ -13,6 +13,15 @@ impl<T: UInt> BitVec<T> {
         BitVec {
             array,
             size: T::BITS,
+        }
+    }
+}
+
+impl<T: UInt> Default for BitVec<T> {
+    fn default() -> Self {
+        BitVec {
+            array: T::ZERO,
+            size: 0,
         }
     }
 }
