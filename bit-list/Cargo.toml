@@ -1,6 +1,6 @@
 [package]
 name = "bit-list"
-version = "0.21.0"
+version = "0.21.1"
 authors = ["natfoam"]
 edition = "2018"
 description = "A lazy list of bits"
@@ -12,4 +12,4 @@ repository = "https://github.com/natfoam/lib"
 [dependencies]
 uints = { path = "../uints", version = "0.6.1" }
 list-fn = { path = "../list-fn", version = "0.17.0" }
-lim-bit-vec = { path = "../lim-bit-vec", version = "0.1.0" }
+lim-bit-vec = { path = "../lim-bit-vec", version = "0.1.1" }

@@ -1,4 +1,4 @@
-use list_fn::{ListFn, ListSome, ListState};
+use list_fn::{Empty, FlatScanFn, Id, ListFn, ListSome, ListState};
 use uints::UInt;
 
 // LSB first bit vector.
@@ -34,5 +34,44 @@ impl<T: UInt> ListFn for BitVec<T> {
                 next: BitVec::new(self.array >> 1, size - 1),
             }),
         }
+    }
+}
+
+pub const fn bit_vec16_new(array: u16, size: u8) -> BitVec16 {
+    BitVec16 { array, size }
+}
+
+pub type BitVec32 = BitVec<u32>;
+
+pub type BitVec16 = BitVec<u16>;
+
+#[derive(Default)]
+pub struct ByteList(BitVec32);
+
+impl ListFn for ByteList {
+    type Item = u8;
+    type End = ByteList;
+    fn next(self) -> ListState<Self> {
+        if self.0.size < 8 {
+            ListState::End(self)
+        } else {
+            ListState::Some(ListSome {
+                first: self.0.array as u8,
+                next: ByteList(BitVec::new(self.0.array >> 8, self.0.size - 8)),
+            })
+        }
+    }
+}
+
+impl FlatScanFn for ByteList {
+    type InputItem = BitVec16;
+    type InputResult = ();
+    type OutputList = Self;
+    type EndList = Empty<u8, Id<BitVec32>>;
+    fn map_item(self, item: BitVec16) -> Self::OutputList {
+        ByteList(self.0.concat(BitVec32::new(item.array as u32, item.size)))
+    }
+    fn map_result(self, _: ()) -> Self::EndList {
+        Empty::new(Id::new(self.0))
     }
 }
