@@ -33,16 +33,12 @@ impl<I: Generator, F: FlatMap<Input = I::Yield> + Copy> Generator for FlatMapGen
     }
 }
 
-pub trait FlatMapSugar: Generator {
-    fn flat_map<F: FlatMap<Input = Self::Yield>>(&mut self, f: F)
-        -> FlatMapGenerator<&mut Self, F>;
+pub trait FlatMapSugar: Generator + Sized {
+    fn flat_map<F: FlatMap<Input = Self::Yield>>(self, f: F) -> FlatMapGenerator<Self, F>;
 }
 
 impl<G: Generator> FlatMapSugar for G {
-    fn flat_map<F: FlatMap<Input = Self::Yield>>(
-        &mut self,
-        flat_map: F,
-    ) -> FlatMapGenerator<&mut Self, F> {
+    fn flat_map<F: FlatMap<Input = Self::Yield>>(self, flat_map: F) -> FlatMapGenerator<Self, F> {
         FlatMapGenerator {
             input: self,
             flat_map,

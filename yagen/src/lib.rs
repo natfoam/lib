@@ -1,8 +1,10 @@
 mod iter;
 mod flat_map;
+mod flat_scan;
 
-use iter::*;
-use flat_map::*;
+pub use iter::*;
+pub use flat_map::*;
+pub use flat_scan::*;
 
 pub trait Generator {
     type Yield;
