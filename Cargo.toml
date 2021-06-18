@@ -9,4 +9,5 @@ members = [
     "lim-bit-vec",
     "u144",
     "publish-ws",
+    "yagen"
 ]
