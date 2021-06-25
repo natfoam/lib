@@ -20,7 +20,7 @@ impl<S: ScanFn> FlatScanFn for ScanWrap<S> {
     type InputItem = S::InputItem;
     type InputResult = S::InputResult;
     type OutputList = OptionList<S::OutputItem, Self>;
-    type EndList = OptionList<S::OutputItem, S::OutputResult>;
+    type EndList = OptionList<S::OutputItem, Id<S::OutputResult>>;
     fn map_item(self, input: Self::InputItem) -> Self::OutputList {
         let ScanState { first, next } = self.0.map_input(input);
         OptionList::Some {
@@ -29,7 +29,7 @@ impl<S: ScanFn> FlatScanFn for ScanWrap<S> {
         }
     }
     fn map_result(self, result: Self::InputResult) -> Self::EndList {
-        OptionList::End(self.0.map_result(result))
+        OptionList::End(Id::new(self.0.map_result(result)))
     }
 }
 

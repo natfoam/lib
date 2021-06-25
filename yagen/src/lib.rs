@@ -1,7 +1,9 @@
 mod iter;
 mod flat_map;
 mod flat_scan;
+mod compose;
 
+pub use compose::*;
 pub use iter::*;
 pub use flat_map::*;
 pub use flat_scan::*;

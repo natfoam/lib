@@ -36,6 +36,7 @@ where
     fn collect(self) -> CollectResult<Self::Item, <Self::End as ResultFn>::Result> {
         self.scan(CollectState(Vec::new(), PhantomData::default()))
             .fold()
+            .result()
     }
 }
 
