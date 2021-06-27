@@ -8,6 +8,7 @@ members = [
     "fixed-array",
     "lim-bit-vec",
     "u144",
+    "u160",
     "publish-ws",
     "yagen"
 ]
