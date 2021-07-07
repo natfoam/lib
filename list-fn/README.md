@@ -75,7 +75,7 @@ trait FlatScan {
   type InputReturn;
   type OutputYield;
   type OutputReturn;
-  fn map_yielf(self, input_yield: Self::InputYield) -> impl List<Yield = Self::OutputYield, Return = Self>;
+  fn map_yield(self, input_yield: Self::InputYield) -> impl List<Yield = Self::OutputYield, Return = Self>;
   fn map_return(self, input_return: Self::InputReturn) -> impl List<Yield = Self::OutputYield, Return = OutputReturn>;
 }
 ```
