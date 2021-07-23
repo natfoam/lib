@@ -14,6 +14,12 @@ impl<F: ListFn> ListState<F> {
     pub fn some(first: F::Item, next: F) -> Self {
         ListState::Some(ListSome { first, next })
     }
+    pub fn unwrap(self) -> ListSome<F> {
+        match self {
+            ListState::Some(v) => v,
+            ListState::End(_) => panic!(),
+        }
+    }
 }
 
 /// A function which returns a list.
