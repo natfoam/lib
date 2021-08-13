@@ -2,29 +2,32 @@ use std::marker::PhantomData;
 
 use super::*;
 
-struct CollectState<T, E>(Vec<T>, PhantomData<E>);
+struct CollectState<C, E>(C, PhantomData<E>);
 
-pub struct CollectResult<I, R> {
-    pub items: Vec<I>,
+impl<C, E> CollectState<C, E> {
+    const fn new(c: C) -> Self { CollectState (c, PhantomData {}) }
+}
+
+pub struct CollectResult<C, R> {
+    pub collection: C,
     pub result: R,
 }
 
-impl<T, E> ScanFn for CollectState<T, E> {
-    type InputItem = T;
+impl<C: Collection, E> ScanFn for CollectState<C, E> {
+    type InputItem = C::Item;
     type InputResult = E;
     type OutputItem = ();
-    type OutputResult = CollectResult<T, Self::InputResult>;
+    type OutputResult = CollectResult<C, Self::InputResult>;
 
-    fn map_input(mut self, input: Self::InputItem) -> ScanState<Self> {
-        self.0.push(input);
+    fn map_input(self, input: Self::InputItem) -> ScanState<Self> {
         ScanState {
             first: (),
-            next: self,
+            next: CollectState::new(self.0.add(input)),
         }
     }
 
     fn map_result(self, result: Self::InputResult) -> Self::OutputResult {
-        CollectResult { items: self.0, result }
+        CollectResult { collection: self.0, result }
     }
 }
 
@@ -33,8 +36,8 @@ where
     Self: ListFn,
     Self::End: ResultFn,
 {
-    fn collect(self) -> CollectResult<Self::Item, <Self::End as ResultFn>::Result> {
-        self.scan(CollectState(Vec::new(), PhantomData::default()))
+    fn collect<C: Collection<Item = Self::Item>>(self, c: C) -> CollectResult<C, <Self::End as ResultFn>::Result> {
+        self.scan(CollectState::new(c))
             .fold()
             .result()
     }

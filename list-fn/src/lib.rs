@@ -15,8 +15,10 @@ mod option_list;
 mod result;
 mod scan;
 mod take;
+mod collection;
 
 pub use collect::*;
+pub use collection::*;
 pub use empty::*;
 pub use filter::*;
 pub use filter_scan::*;
@@ -88,8 +90,8 @@ mod tests {
 
     #[test]
     fn as_range() {
-        let v = Range10(0).collect();
-        assert_eq!(v.items, vec![0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+        let v = Range10(0).collect(Vec::default());
+        assert_eq!(v.collection, vec![0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
     }
 
     #[test]
