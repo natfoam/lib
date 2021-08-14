@@ -1,3 +1,7 @@
+use std::collections::{BTreeSet, HashSet};
+
+use std::hash::Hash;
+
 use super::*;
 
 pub trait Collection {
@@ -10,6 +14,24 @@ impl<T> Collection for Vec<T> {
 
     fn add(mut self, item: Self::Item) -> Self {
         self.push(item);
+        self
+    }
+}
+
+impl<T: Hash + Eq> Collection for HashSet<T> {
+    type Item = T;
+
+    fn add(mut self, item: Self::Item) -> Self {
+        self.insert(item);
+        self
+    }
+}
+
+impl<T: Ord> Collection for BTreeSet<T> {
+    type Item = T;
+
+    fn add(mut self, item: Self::Item) -> Self {
+        self.insert(item);
         self
     }
 }
