@@ -2,8 +2,6 @@ use std::collections::{BTreeSet, HashSet};
 
 use std::hash::Hash;
 
-use super::*;
-
 pub trait Collection {
     type Item;
     fn add(self, item: Self::Item) -> Self; 
