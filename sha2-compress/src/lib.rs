@@ -174,7 +174,8 @@ impl<I: Item> Sha2 for Hash<I> {
         let mut f = self[5];
         let mut g = self[6];
         let mut h = self[7];
-        for i in 0..I::KType::SIZE {
+        let mut i = 0;
+        loop {
             let big_s1 = I::BIG_S1.get(e);
             let ch = (e & f) ^ (!e & g);
             let wi = i & 0xF;
@@ -194,11 +195,13 @@ impl<I: Item> Sha2 for Hash<I> {
             c = b;
             b = a;
             a = temp1.overflow_add(temp2);
+            if i == I::KType::SIZE - 1 { break }
             //
             w[wi] = w[wi]
                 .overflow_add(I::SMALL_S0.get(w[(i + 1) & 0xF]))
                 .overflow_add(w[(i + 9) & 0xF])
                 .overflow_add(I::SMALL_S1.get(w[(i + 14) & 0xF]));
+            i += 1;
         }
         [
             self[0].overflow_add(a),
