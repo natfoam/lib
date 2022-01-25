@@ -165,7 +165,6 @@ pub trait Sha2 {
 
 impl<I: Item> Sha2 for Hash<I> {
     fn compress(&self, h1: &Hash<I>, h2: &Hash<I>) -> Hash<I> {
-        let mut w = I::w(h1, h2);
         let mut a = self[0];
         let mut b = self[1];
         let mut c = self[2];
@@ -174,16 +173,14 @@ impl<I: Item> Sha2 for Hash<I> {
         let mut f = self[5];
         let mut g = self[6];
         let mut h = self[7];
-        let mut i = 0;
-        loop {
+        let mut round = |i: usize, w: I| {
             let big_s1 = I::BIG_S1.get(e);
             let ch = (e & f) ^ (!e & g);
-            let wi = i & 0xF;
             let temp1 = h
                 .overflow_add(big_s1)
                 .overflow_add(ch)
                 .overflow_add(I::K[i])
-                .overflow_add(w[wi]);
+                .overflow_add(w);
             let big_s0 = I::BIG_S0.get(a);
             let maj = (a & b) ^ (a & c) ^ (b & c);
             let temp2 = big_s0.overflow_add(maj);
@@ -195,13 +192,19 @@ impl<I: Item> Sha2 for Hash<I> {
             c = b;
             b = a;
             a = temp1.overflow_add(temp2);
-            if i == I::KType::SIZE - 1 { break }
-            //
-            w[wi] = w[wi]
+        };
+        let mut w = I::w(h1, h2);
+        for i in 0..16 {
+            round(i, w[i]);
+        }
+        for i in 16..I::KType::SIZE {
+            let i16 = i & 0xF;
+            let wi = w[i16]
                 .overflow_add(I::SMALL_S0.get(w[(i + 1) & 0xF]))
                 .overflow_add(w[(i + 9) & 0xF])
                 .overflow_add(I::SMALL_S1.get(w[(i + 14) & 0xF]));
-            i += 1;
+            w[i16] = wi;
+            round(i, wi);
         }
         [
             self[0].overflow_add(a),

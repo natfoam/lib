@@ -1,6 +1,6 @@
 [package]
 name = "sha2-compress"
-version = "0.3.2"
+version = "0.3.3"
 authors = ["natfoam"]
 edition = "2021"
 description = "SHA2 compress function"
