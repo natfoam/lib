@@ -19,19 +19,21 @@ impl SmallSigma {
 
 pub type Hash<I> = [I; 8];
 
+type W<I> = [I; 16];
+
 pub trait Item: UInt + Copy + Sized {
-    type W: Array<Output = Self>;
-    const K: Self::W;
+    type KType: Array<Output = Self>;
+    const K: Self::KType;
     const BIG_S0: BigSigma;
     const BIG_S1: BigSigma;
     const SMALL_S0: SmallSigma;
     const SMALL_S1: SmallSigma;
-    fn w(a: &Hash<Self>, b: &Hash<Self>) -> Self::W;
+    fn w(a: &Hash<Self>, b: &Hash<Self>) -> W<Self>;
 }
 
 impl Item for u32 {
-    type W = [Self; 64];
-    const K: Self::W = [
+    type KType = [Self; 64];
+    const K: Self::KType = [
         0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, // 4
         0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5, // 8
         0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, // 12
@@ -53,23 +55,17 @@ impl Item for u32 {
     const BIG_S1: BigSigma = BigSigma(6, 11, 25);
     const SMALL_S0: SmallSigma = SmallSigma(7, 18, 3);
     const SMALL_S1: SmallSigma = SmallSigma(17, 19, 10);
-    fn w(a: &Hash<Self>, b: &Hash<Self>) -> Self::W {
+    fn w(a: &Hash<Self>, b: &Hash<Self>) -> W<Self> {
         [
             a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], // a
             b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7], // b
-            0, 0, 0, 0, 0, 0, 0, 0, // 2
-            0, 0, 0, 0, 0, 0, 0, 0, // 3
-            0, 0, 0, 0, 0, 0, 0, 0, // 4
-            0, 0, 0, 0, 0, 0, 0, 0, // 5
-            0, 0, 0, 0, 0, 0, 0, 0, // 6
-            0, 0, 0, 0, 0, 0, 0, 0, // 7
         ]
     }
 }
 
 impl Item for u64 {
-    type W = [Self; 80];
-    const K: Self::W = [
+    type KType = [Self; 80];
+    const K: Self::KType = [
         0x428a2f98d728ae22,
         0x7137449123ef65cd,
         0xb5c0fbcfec4d3b2f,
@@ -155,18 +151,10 @@ impl Item for u64 {
     const BIG_S1: BigSigma = BigSigma(14, 18, 41);
     const SMALL_S0: SmallSigma = SmallSigma(1, 8, 7);
     const SMALL_S1: SmallSigma = SmallSigma(19, 61, 6);
-    fn w(a: &Hash<Self>, b: &Hash<Self>) -> Self::W {
+    fn w(a: &Hash<Self>, b: &Hash<Self>) -> W<Self> {
         [
             a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], // a
             b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7], // b
-            0, 0, 0, 0, 0, 0, 0, 0, // 2
-            0, 0, 0, 0, 0, 0, 0, 0, // 3
-            0, 0, 0, 0, 0, 0, 0, 0, // 4
-            0, 0, 0, 0, 0, 0, 0, 0, // 5
-            0, 0, 0, 0, 0, 0, 0, 0, // 6
-            0, 0, 0, 0, 0, 0, 0, 0, // 7
-            0, 0, 0, 0, 0, 0, 0, 0, // 8
-            0, 0, 0, 0, 0, 0, 0, 0, // 9
         ]
     }
 }
@@ -178,12 +166,6 @@ pub trait Sha2 {
 impl<I: Item> Sha2 for Hash<I> {
     fn compress(&self, h1: &Hash<I>, h2: &Hash<I>) -> Hash<I> {
         let mut w = I::w(h1, h2);
-        for i in 16..I::W::SIZE {
-            w[i] = w[i - 16]
-                .overflow_add(I::SMALL_S0.get(w[i - 15]))
-                .overflow_add(w[i - 7])
-                .overflow_add(I::SMALL_S1.get(w[i - 2]));
-        }
         let mut a = self[0];
         let mut b = self[1];
         let mut c = self[2];
@@ -192,14 +174,15 @@ impl<I: Item> Sha2 for Hash<I> {
         let mut f = self[5];
         let mut g = self[6];
         let mut h = self[7];
-        for i in 0..I::W::SIZE {
+        for i in 0..I::KType::SIZE {
             let big_s1 = I::BIG_S1.get(e);
             let ch = (e & f) ^ (!e & g);
+            let wi = i & 0xF;
             let temp1 = h
                 .overflow_add(big_s1)
                 .overflow_add(ch)
                 .overflow_add(I::K[i])
-                .overflow_add(w[i]);
+                .overflow_add(w[wi]);
             let big_s0 = I::BIG_S0.get(a);
             let maj = (a & b) ^ (a & c) ^ (b & c);
             let temp2 = big_s0.overflow_add(maj);
@@ -211,6 +194,11 @@ impl<I: Item> Sha2 for Hash<I> {
             c = b;
             b = a;
             a = temp1.overflow_add(temp2);
+            //
+            w[wi] = w[wi]
+                .overflow_add(I::SMALL_S0.get(w[(i + 1) & 0xF]))
+                .overflow_add(w[(i + 9) & 0xF])
+                .overflow_add(I::SMALL_S1.get(w[(i + 14) & 0xF]));
         }
         [
             self[0].overflow_add(a),
