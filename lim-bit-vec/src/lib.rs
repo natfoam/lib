@@ -41,6 +41,8 @@ pub const fn bit_vec16_new(array: u16, size: u8) -> BitVec16 {
     BitVec16 { array, size }
 }
 
+pub type BitVec64 = BitVec<u64>;
+
 pub type BitVec32 = BitVec<u32>;
 
 pub type BitVec16 = BitVec<u16>;

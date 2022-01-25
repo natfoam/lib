@@ -54,4 +54,4 @@ Rust libraries:
       fn x() -> [u8; N];
   }
   ```
-- Generators. See [genawaiter](https://crates.io/crates/genawaiter) as an example.
+- [Generators](https://doc.rust-lang.org/std/ops/trait.Generator.html). See [genawaiter](https://crates.io/crates/genawaiter) as an example.
