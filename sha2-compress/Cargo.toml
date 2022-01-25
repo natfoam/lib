@@ -2,7 +2,7 @@
 name = "sha2-compress"
 version = "0.3.0"
 authors = ["natfoam"]
-edition = "2018"
+edition = "2021"
 description = "SHA2 compress function"
 license = "Apache-2.0"
 repository = "https://github.com/natfoam/lib"

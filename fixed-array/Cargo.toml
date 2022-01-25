@@ -2,7 +2,7 @@
 name = "fixed-array"
 version = "0.2.0"
 authors = ["natfoam"]
-edition = "2018"
+edition = "2021"
 description = "Fixed-size array"
 license = "Apache-2.0"
 repository = "https://github.com/natfoam/lib"

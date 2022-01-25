@@ -2,7 +2,7 @@
 name = "publish-ws"
 version = "0.1.8"
 authors = ["natfoam"]
-edition = "2018"
+edition = "2021"
 description = "Publish Workspace Packages"
 license = "Apache-2.0"
 repository = "https://github.com/natfoam/lib"

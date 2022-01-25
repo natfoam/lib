@@ -1,7 +1,7 @@
 [package]
 name = "u160"
 version = "0.1.1"
-edition = "2018"
+edition = "2021"
 description = "Unsigned Integer 160 bits"
 license = "Apache-2.0"
 repository = "https://github.com/natfoam/lib"

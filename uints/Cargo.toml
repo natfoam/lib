@@ -2,7 +2,7 @@
 name = "uints"
 version = "0.7.0"
 authors = ["natfoam"]
-edition = "2018"
+edition = "2021"
 description = "Unsigned Integer Properties"
 license = "Apache-2.0"
 repository = "https://github.com/natfoam/lib"

@@ -2,7 +2,7 @@
 name = "list-fn"
 version = "0.19.1"
 authors = ["natfoam"]
-edition = "2018"
+edition = "2021"
 description = "A generic lazy list"
 license = "Apache-2.0"
 repository = "https://github.com/natfoam/lib"

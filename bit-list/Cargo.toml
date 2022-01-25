@@ -2,7 +2,7 @@
 name = "bit-list"
 version = "0.24.1"
 authors = ["natfoam"]
-edition = "2018"
+edition = "2021"
 description = "A lazy list of bits"
 license = "Apache-2.0"
 repository = "https://github.com/natfoam/lib"
@@ -12,4 +12,4 @@ repository = "https://github.com/natfoam/lib"
 [dependencies]
 uints = { path = "../uints", version = "0.7.0" }
 list-fn = { path = "../list-fn", version = "0.19.1" }
-lim-bit-vec = { path = "../lim-bit-vec", version = "0.4.1" }
+lim-bit-vec = { path = "../lim-bit-vec", version = "0.4.2" }

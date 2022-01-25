@@ -2,7 +2,7 @@
 name = "lim-bit-vec"
 version = "0.4.2"
 authors = ["natfoam"]
-edition = "2018"
+edition = "2021"
 description = "Limited bit vectors"
 license = "Apache-2.0"
 repository = "https://github.com/natfoam/lib"
