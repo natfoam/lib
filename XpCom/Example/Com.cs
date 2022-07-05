@@ -1,6 +1,6 @@
 ﻿namespace Example
 {
-    interface IMy
+    public interface IMy
     {
         uint GetValue();
     }
