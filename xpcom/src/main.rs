@@ -65,12 +65,12 @@ fn method(name: &str, params: &[Param], result: Type) -> Method {
     }
 }
 
-fn ptr(t: Type) -> Type {
-    Type::Ptr(Box::new(t))
+fn ptr(type_: Type) -> Type {
+    Type::Ptr(Box::new(type_))
 }
 
-fn param(name: &str, t: Type) -> Param {
-    Param { name: name.to_string(), r#type: t }
+fn param(name: &str, type_: Type) -> Param {
+    Param { name: name.to_string(), r#type: type_ }
 }
 
 type Library = HashMap<String, TypeDef>;
