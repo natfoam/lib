@@ -10,5 +10,6 @@ members = [
     "u144",
     "u160",
     "publish-ws",
-    "yagen"
+    "yagen",
+    "xpcom"
 ]
