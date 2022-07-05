@@ -1,9 +1,0 @@
----
-IMy:
-  Interface:
-    - ""
-    - - - GetValue
-        - []
-        - Ptr: U32
-S:
-  Struct: []
