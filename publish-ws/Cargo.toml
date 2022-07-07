@@ -1,6 +1,6 @@
 [package]
 name = "publish-ws"
-version = "0.1.9"
+version = "0.1.10"
 authors = ["natfoam"]
 edition = "2021"
 description = "Publish Workspace Packages"
@@ -11,5 +11,5 @@ repository = "https://github.com/natfoam/lib"
 
 [dependencies]
 toml = "0.5.9"
-serde = "1.0.137"
-serde_derive = "1.0.137"
+serde = "1.0.138"
+serde_derive = "1.0.138"
