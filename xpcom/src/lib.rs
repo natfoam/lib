@@ -1,6 +1,10 @@
+use std::ptr::{null_mut};
+
 type HRESULT = u32;
 
 const S_OK: HRESULT = 0;
+const E_NOINTERFACE: HRESULT = 0x80004002;
+const E_POINTER: HRESULT = 0x80004003;
 
 type GUID = u128;
 
@@ -18,7 +22,7 @@ pub struct Obj<I: Interface> (&'static Vmt<I>);
 #[allow(non_snake_case)]
 #[repr(C)]
 struct Vmt<I: Interface> {
-    QueryInterface: extern "stdcall" fn (this: &mut Obj<I>, riid: &GUID, ppvObject: &mut &mut Obj<I>) -> HRESULT,
+    QueryInterface: extern "stdcall" fn (this: &mut Obj<I>, riid: &GUID, ppvObject: *mut *mut Obj<I>) -> HRESULT,
     AddRef: extern "stdcall" fn (this: &mut Obj<I>) -> ULONG,
     Release: extern "stdcall" fn (this: &mut Obj<I>) -> ULONG,
     interface: I
@@ -61,8 +65,16 @@ trait ClassEx: Class {
         Release: Self::Release,
         interface: Self::INTERFACE,
     };
-    extern "stdcall" fn QueryInterface(_this: &mut Obj<Self::Interface>, _riid: &GUID, _ppvObject: &mut &mut Obj<Self::Interface>) -> HRESULT {
-        S_OK
+    extern "stdcall" fn QueryInterface(this: &mut Obj<Self::Interface>, riid: &GUID, ppvObject: *mut *mut Obj<Self::Interface>) -> HRESULT {
+        if ppvObject == null_mut() {
+            E_POINTER
+        } else if Self::Interface::ID == *riid {
+            unsafe { *ppvObject = &mut *this };
+            S_OK
+        } else {
+            unsafe { *ppvObject = null_mut() };
+            E_NOINTERFACE
+        }
     }
     extern "stdcall" fn AddRef(_this: &mut Obj<Self::Interface>) -> ULONG { 0 }
     extern "stdcall" fn Release(_this: &mut Obj<Self::Interface>) -> ULONG { 0 }
