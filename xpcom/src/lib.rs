@@ -67,14 +67,16 @@ trait ClassEx: Class {
     };
     extern "stdcall" fn QueryInterface(this: &mut Obj<Self::Interface>, riid: &GUID, ppvObject: *mut *mut Obj<Self::Interface>) -> HRESULT {
         if ppvObject == null_mut() {
-            E_POINTER
-        } else if Self::Interface::ID == *riid {
-            unsafe { *ppvObject = &mut *this };
-            S_OK
-        } else {
-            unsafe { *ppvObject = null_mut() };
-            E_NOINTERFACE
+            return E_POINTER
         }
+        let result: (*mut Obj<Self::Interface>, HRESULT) = if Self::Interface::ID == *riid {
+            Self::AddRef(this);
+            (this, S_OK)
+        } else {
+            (null_mut(), E_NOINTERFACE)
+        };
+        unsafe { *ppvObject = result.0 }
+        result.1
     }
     extern "stdcall" fn AddRef(_this: &mut Obj<Self::Interface>) -> ULONG { 0 }
     extern "stdcall" fn Release(_this: &mut Obj<Self::Interface>) -> ULONG { 0 }
