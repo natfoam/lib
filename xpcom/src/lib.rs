@@ -1,4 +1,4 @@
-use std::ptr::{null_mut};
+use std::{ptr::{null_mut}, sync::atomic::{AtomicU32, Ordering}};
 
 type HRESULT = u32;
 
@@ -17,14 +17,14 @@ pub trait Interface: 'static {
 }
 
 #[repr(transparent)]
-pub struct Obj<I: Interface> (&'static Vmt<I>);
+pub struct Obj<I: Interface> (&'static Vmt<Obj<I>, I>);
 
 #[allow(non_snake_case)]
 #[repr(C)]
-struct Vmt<I: Interface> {
-    QueryInterface: extern "stdcall" fn (this: &mut Obj<I>, riid: &GUID, ppvObject: *mut *mut Obj<I>) -> HRESULT,
-    AddRef: extern "stdcall" fn (this: &mut Obj<I>) -> ULONG,
-    Release: extern "stdcall" fn (this: &mut Obj<I>) -> ULONG,
+struct Vmt<T, I: Interface> {
+    QueryInterface: extern "stdcall" fn (this: &mut T, riid: &GUID, ppvObject: *mut *mut T) -> HRESULT,
+    AddRef: extern "stdcall" fn (this: &mut T) -> ULONG,
+    Release: extern "stdcall" fn (this: &mut T) -> ULONG,
     interface: I
 }
 
@@ -52,24 +52,31 @@ impl<I: Interface> Clone for Ref<I> {
 
 //
 
-pub trait Class {
+pub trait Class: 'static + Sized {
     type Interface: Interface;
     const INTERFACE: Self::Interface;
 }
 
+#[repr(C)]
+struct ClassObj<C: Class> {
+    vmt: &'static Vmt<Self, C::Interface>,
+    counter: AtomicU32,
+    value: C,
+}
+
 #[allow(non_snake_case)]
 trait ClassEx: Class {
-    const VMT: Vmt<Self::Interface> = Vmt {
+    const VMT: Vmt<ClassObj<Self>, Self::Interface> = Vmt {
         QueryInterface: Self::QueryInterface,
         AddRef: Self::AddRef,
         Release: Self::Release,
         interface: Self::INTERFACE,
     };
-    extern "stdcall" fn QueryInterface(this: &mut Obj<Self::Interface>, riid: &GUID, ppvObject: *mut *mut Obj<Self::Interface>) -> HRESULT {
+    extern "stdcall" fn QueryInterface(this: &mut ClassObj<Self>, riid: &GUID, ppvObject: *mut *mut ClassObj<Self>) -> HRESULT {
         if ppvObject == null_mut() {
             return E_POINTER
         }
-        let result: (*mut Obj<Self::Interface>, HRESULT) = if Self::Interface::ID == *riid {
+        let result: (*mut ClassObj<Self>, HRESULT) = if Self::Interface::ID == *riid {
             Self::AddRef(this);
             (this, S_OK)
         } else {
@@ -78,8 +85,19 @@ trait ClassEx: Class {
         unsafe { *ppvObject = result.0 }
         result.1
     }
-    extern "stdcall" fn AddRef(_this: &mut Obj<Self::Interface>) -> ULONG { 0 }
-    extern "stdcall" fn Release(_this: &mut Obj<Self::Interface>) -> ULONG { 0 }
+    extern "stdcall" fn AddRef(this: &mut ClassObj<Self>) -> ULONG {
+        this.counter.fetch_add(1, Ordering::Relaxed) + 1
+    }
+    extern "stdcall" fn Release(this: &mut ClassObj<Self>) -> ULONG {
+        match this.counter.fetch_sub(1, Ordering::Relaxed) {
+            0 => panic!("release"),
+            1 => { 
+                unsafe { Box::from_raw(this) };
+                0
+            }
+            c => c - 1
+        }
+    }
 } 
 
 impl<C: Class> ClassEx for C {}
