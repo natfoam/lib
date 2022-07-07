@@ -73,6 +73,18 @@ struct ClassObj<C: Class> {
 }
 
 impl<C: Class> ClassObj<C> {
+    fn new(value: C) -> Box<Self> {
+        Box::new(ClassObj {
+            vmt: Box::new(Vmt {
+                QueryInterface: ClassObj::QueryInterface,
+                AddRef: ClassObj::AddRef,
+                Release: ClassObj::Release,
+                interface: C::INTERFACE,
+            }),
+            counter: AtomicU32::default(),
+            value,
+        })
+    }
     extern "stdcall" fn QueryInterface(
         &mut self,
         riid: &GUID,
@@ -106,17 +118,7 @@ impl<C: Class> ClassObj<C> {
 }
 
 pub fn new<C: Class>(value: C) -> Ref<C::Interface> {
-    let p = Box::new(ClassObj {
-        vmt: Box::new(Vmt {
-            QueryInterface: ClassObj::QueryInterface,
-            AddRef: ClassObj::AddRef,
-            Release: ClassObj::Release,
-            interface: C::INTERFACE,
-        }),
-        counter: AtomicU32::default(),
-        value,
-    });
-    let i = Box::into_raw(p) as *mut Obj<C::Interface>;
+    let i = Box::into_raw(ClassObj::new(value)) as *mut Obj<C::Interface>;
     Ref::new(unsafe { &mut *i })
 }
 
