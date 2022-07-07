@@ -1,4 +1,7 @@
-use std::{ptr::{null_mut}, sync::atomic::{AtomicU32, Ordering}};
+use std::{
+    ptr::null_mut,
+    sync::atomic::{AtomicU32, Ordering},
+};
 
 type HRESULT = u32;
 
@@ -17,22 +20,25 @@ pub trait Interface: 'static {
 }
 
 #[repr(transparent)]
-pub struct Obj<I: Interface> (&'static Vmt<Obj<I>, I>);
+pub struct Obj<I: Interface>(&'static Vmt<Obj<I>, I>);
 
 #[allow(non_snake_case)]
 #[repr(C)]
 struct Vmt<T, I: Interface> {
-    QueryInterface: extern "stdcall" fn (this: &mut T, riid: &GUID, ppvObject: *mut *mut T) -> HRESULT,
-    AddRef: extern "stdcall" fn (this: &mut T) -> ULONG,
-    Release: extern "stdcall" fn (this: &mut T) -> ULONG,
-    interface: I
+    QueryInterface:
+        extern "stdcall" fn(this: &mut T, riid: &GUID, ppvObject: *mut *mut T) -> HRESULT,
+    AddRef: extern "stdcall" fn(this: &mut T) -> ULONG,
+    Release: extern "stdcall" fn(this: &mut T) -> ULONG,
+    interface: I,
 }
 
 #[repr(transparent)]
 pub struct Ref<I: Interface>(*mut Obj<I>);
 
 impl<I: Interface> Ref<I> {
-    pub fn raw(&self) -> &mut Obj<I> { unsafe { &mut *self.0 } }
+    pub fn raw(&self) -> &mut Obj<I> {
+        unsafe { &mut *self.0 }
+    }
     pub fn new(raw: &mut Obj<I>) -> Self {
         (raw.0.AddRef)(raw);
         Self(raw)
@@ -47,7 +53,9 @@ impl<I: Interface> Drop for Ref<I> {
 }
 
 impl<I: Interface> Clone for Ref<I> {
-    fn clone(&self) -> Self { Self::new(self.raw()) }
+    fn clone(&self) -> Self {
+        Self::new(self.raw())
+    }
 }
 
 //
@@ -59,54 +67,62 @@ pub trait Class: 'static + Sized {
 
 #[repr(C)]
 struct ClassObj<C: Class> {
-    vmt: &'static Vmt<Self, C::Interface>,
+    vmt: Box<Vmt<Self, C::Interface>>,
     counter: AtomicU32,
     value: C,
 }
 
-#[allow(non_snake_case)]
-trait ClassEx: Class {
-    const VMT: Vmt<ClassObj<Self>, Self::Interface> = Vmt {
-        QueryInterface: Self::QueryInterface,
-        AddRef: Self::AddRef,
-        Release: Self::Release,
-        interface: Self::INTERFACE,
-    };
-    extern "stdcall" fn QueryInterface(this: &mut ClassObj<Self>, riid: &GUID, ppvObject: *mut *mut ClassObj<Self>) -> HRESULT {
+impl<C: Class> ClassObj<C> {
+    extern "stdcall" fn QueryInterface(
+        &mut self,
+        riid: &GUID,
+        ppvObject: *mut *mut Self,
+    ) -> HRESULT {
         if ppvObject == null_mut() {
-            return E_POINTER
+            return E_POINTER;
         }
-        let result: (*mut ClassObj<Self>, HRESULT) = if Self::Interface::ID == *riid {
-            Self::AddRef(this);
-            (this, S_OK)
+        let result: (*mut Self, HRESULT) = if C::Interface::ID == *riid {
+            self.AddRef();
+            (self, S_OK)
         } else {
             (null_mut(), E_NOINTERFACE)
         };
         unsafe { *ppvObject = result.0 }
         result.1
     }
-    extern "stdcall" fn AddRef(this: &mut ClassObj<Self>) -> ULONG {
-        this.counter.fetch_add(1, Ordering::Relaxed) + 1
+    extern "stdcall" fn AddRef(&mut self) -> ULONG {
+        self.counter.fetch_add(1, Ordering::Relaxed) + 1
     }
-    extern "stdcall" fn Release(this: &mut ClassObj<Self>) -> ULONG {
-        match this.counter.fetch_sub(1, Ordering::Relaxed) {
+    extern "stdcall" fn Release(&mut self) -> ULONG {
+        match self.counter.fetch_sub(1, Ordering::Relaxed) {
             0 => panic!("release"),
-            1 => { 
-                unsafe { Box::from_raw(this) };
+            1 => {
+                unsafe { Box::from_raw(self) };
                 0
             }
-            c => c - 1
+            c => c - 1,
         }
     }
-} 
+}
 
-impl<C: Class> ClassEx for C {}
+pub fn new<C: Class>(value: C) -> Ref<C::Interface> {
+    let p = Box::new(ClassObj {
+        vmt: Box::new(Vmt {
+            QueryInterface: ClassObj::QueryInterface,
+            AddRef: ClassObj::AddRef,
+            Release: ClassObj::Release,
+            interface: C::INTERFACE,
+        }),
+        counter: AtomicU32::default(),
+        value,
+    });
+    let i = Box::into_raw(p) as *mut Obj<C::Interface>;
+    Ref::new(unsafe { &mut *i })
+}
 
 #[cfg(test)]
 mod tests {
 
     #[test]
-    fn it_works() {
-
-    }
+    fn it_works() {}
 }
