@@ -11,5 +11,6 @@ members = [
     "u160",
     "publish-ws",
     "yagen",
-    "xpcom"
+    "xpcom",
+    "xpcom/tool"
 ]
