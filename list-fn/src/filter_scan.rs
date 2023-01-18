@@ -11,8 +11,11 @@ pub trait FilterScanFn: Sized {
     type OutputResult;
     fn map_input(self, input: Self::InputItem) -> FilterScanState<Self>;
     fn map_result(self, result: Self::InputResult) -> Self::OutputResult;
-    fn some(self, first: Self::OutputItem) -> FilterScanState<Self> {        
-        OptionList::Some { first, end: FilterScanWrap(self) }
+    fn some(self, first: Self::OutputItem) -> FilterScanState<Self> {
+        OptionList::Some {
+            first,
+            end: FilterScanWrap(self),
+        }
     }
     fn end(self) -> FilterScanState<Self> {
         OptionList::End(FilterScanWrap(self))

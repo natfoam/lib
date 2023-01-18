@@ -1,12 +1,12 @@
-mod iter;
+mod compose;
 mod flat_map;
 mod flat_scan;
-mod compose;
+mod iter;
 
 pub use compose::*;
-pub use iter::*;
 pub use flat_map::*;
 pub use flat_scan::*;
+pub use iter::*;
 
 pub trait Generator {
     type Yield;

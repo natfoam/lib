@@ -27,7 +27,8 @@ impl<I: ListFn, F: FlatMapFn<Input = I::Item>> ListFn for FlatMapList<I, F> {
                                 flat_map: self.flat_map,
                                 input_list: self.input_list,
                                 output_list: Some(some.next),
-                            })
+                            },
+                        )
                     }
                     ListState::End(..) => self.output_list = None,
                 },

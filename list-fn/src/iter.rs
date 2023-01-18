@@ -9,7 +9,7 @@ impl<I: Iterator> ListFn for &mut I {
     fn next(self) -> ListState<Self> {
         match self.next() {
             Option::None => ListState::End(self),
-            Option::Some(first) => ListState::some(first, self ),
+            Option::Some(first) => ListState::some(first, self),
         }
     }
 }
