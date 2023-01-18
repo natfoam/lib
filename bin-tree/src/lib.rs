@@ -4,8 +4,13 @@ pub trait Node {
 }
 
 #[repr(transparent)]
-#[derive(Default)]
 pub struct State<T: Node>(Vec<(T, u8)>);
+
+impl<T: Node> Default for State<T> {
+    fn default() -> Self {
+        Self(Default::default())
+    }
+}
 
 impl<T: Node> State<T> {
     pub fn fold_op(mut self, mut right: T) -> Self {
@@ -44,7 +49,7 @@ pub trait BinTree {
 }
 
 impl<T: Iterator> BinTree for T
-where T::Item: Node + Default {
+where T::Item: Node {
     type Result = T::Item;
     fn bin_tree(self) -> Option<Self::Result> {
         self.fold(State::default(), State::fold_op).collect()
