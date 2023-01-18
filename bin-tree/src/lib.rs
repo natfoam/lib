@@ -3,6 +3,7 @@ pub trait Node {
     fn new1(&self) -> Self;
 }
 
+#[repr(transparent)]
 #[derive(Default)]
 pub struct State<T: Node>(Vec<(T, u8)>);
 
@@ -37,6 +38,19 @@ impl<T: Node> State<T> {
     }
 }
 
+pub trait BinTree {
+    type Result: Node;
+    fn bin_tree(self) -> Option<Self::Result>;
+}
+
+impl<T: Iterator> BinTree for T
+where T::Item: Node + Default {
+    type Result = T::Item;
+    fn bin_tree(self) -> Option<Self::Result> {
+        self.fold(State::default(), State::fold_op).collect()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -58,8 +72,7 @@ mod tests {
     fn sum() {
         let x = (0..10)
             .map(|v| Sum(v))
-            .fold(State::default(), State::fold_op)
-            .collect();
+            .bin_tree();
         assert_eq!(x, Some(Sum(45)));
     }
 }
