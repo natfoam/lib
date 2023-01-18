@@ -1,6 +1,6 @@
 [package]
 name = "publish-ws"
-version = "0.1.9"
+version = "0.1.10"
 authors = ["natfoam"]
 edition = "2021"
 description = "Publish Workspace Packages"
@@ -10,6 +10,6 @@ repository = "https://github.com/natfoam/lib"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-toml = "0.5.9"
-serde = "1.0.137"
-serde_derive = "1.0.137"
+toml = "0.5.10"
+serde = "1.0.152"
+serde_derive = "1.0.152"
