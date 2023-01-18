@@ -1,4 +1,5 @@
 mod collect;
+mod collection;
 mod empty;
 mod filter;
 mod filter_scan;
@@ -15,7 +16,6 @@ mod option_list;
 mod result;
 mod scan;
 mod take;
-mod collection;
 
 pub use collect::*;
 pub use collection::*;

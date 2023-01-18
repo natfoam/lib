@@ -5,7 +5,9 @@ use super::*;
 struct CollectState<C, E>(C, PhantomData<E>);
 
 impl<C, E> CollectState<C, E> {
-    const fn new(c: C) -> Self { CollectState (c, PhantomData {}) }
+    const fn new(c: C) -> Self {
+        CollectState(c, PhantomData {})
+    }
 }
 
 pub struct CollectResult<C, R> {
@@ -27,7 +29,10 @@ impl<C: Collection, E> ScanFn for CollectState<C, E> {
     }
 
     fn map_result(self, result: Self::InputResult) -> Self::OutputResult {
-        CollectResult { collection: self.0, result }
+        CollectResult {
+            collection: self.0,
+            result,
+        }
     }
 }
 
@@ -36,10 +41,11 @@ where
     Self: ListFn,
     Self::End: ResultFn,
 {
-    fn collect<C: Collection<Item = Self::Item>>(self, c: C) -> CollectResult<C, <Self::End as ResultFn>::Result> {
-        self.scan(CollectState::new(c))
-            .fold()
-            .result()
+    fn collect<C: Collection<Item = Self::Item>>(
+        self,
+        c: C,
+    ) -> CollectResult<C, <Self::End as ResultFn>::Result> {
+        self.scan(CollectState::new(c)).fold().result()
     }
 }
 

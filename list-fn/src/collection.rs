@@ -4,7 +4,7 @@ use std::hash::Hash;
 
 pub trait Collection {
     type Item;
-    fn add(self, item: Self::Item) -> Self; 
+    fn add(self, item: Self::Item) -> Self;
 }
 
 impl<T> Collection for Vec<T> {
