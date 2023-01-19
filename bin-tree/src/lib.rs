@@ -1,10 +1,25 @@
+/// A trait representing a node in a binary tree.
 pub trait Node {
-    fn new2(&self, right: &Self) -> Self;
-    fn new1(&self) -> Self;
+    /// Creates a new parent node from two child nodes
+    ///
+    /// # Arguments
+    ///
+    /// * `right` - the right child node
+    ///
+    /// # Return
+    ///
+    /// The new parent node with the left node as `self` and the right node as `right`
+    fn new_parent2(&self, right: &Self) -> Self;
+    /// Creates a new parent node from a child node
+    ///
+    /// # Return
+    ///
+    /// The new parent node with the child node as `self`
+    fn new_parent1(&self) -> Self;
 }
 
 #[repr(transparent)]
-pub struct State<T: Node>(Vec<(T, u8)>);
+struct BuildTreeState<T: Node>(Vec<(T, u8)>);
 
 fn state_capacity(v: usize) -> usize {
     if v < 2 {
@@ -14,11 +29,11 @@ fn state_capacity(v: usize) -> usize {
     }
 }
 
-impl<T: Node> State<T> {
+impl<T: Node> BuildTreeState<T> {
     pub fn new(i: &impl Iterator<Item = T>) -> Self {
-        State(Vec::with_capacity(state_capacity(match i.size_hint() {
-            (_, Some(upper)) => upper,
-            (lower, _) => lower,
+        BuildTreeState(Vec::with_capacity(state_capacity({
+            let (min, max) = i.size_hint();
+            max.unwrap_or(min)
         })))
     }
     // 00 => 0 []
@@ -48,7 +63,7 @@ impl<T: Node> State<T> {
         loop {
             match self.0.last() {
                 Some((left, left_level)) if *left_level == right_level => {
-                    right = left.new2(&right);
+                    right = left.new_parent2(&right);
                     right_level += 1;
                     self.0.pop();
                 }
@@ -64,28 +79,37 @@ impl<T: Node> State<T> {
             .rev()
             .reduce(|(mut right, mut right_level), (left, left_level)| {
                 while left_level > right_level {
-                    right = right.new1();
+                    right = right.new_parent1();
                     right_level += 1;
                 }
-                (left.new2(&right), right_level + 1)
+                (left.new_parent2(&right), right_level + 1)
             })
             .map(|(v, _)| v)
     }
 }
 
-pub trait BinTree {
-    type Result: Node;
-    fn bin_tree(self) -> Option<Self::Result>;
+pub trait BuildTreeEx {
+    type Node: Node;
+    /// Builds a binary tree from an iterator of Nodes
+    ///
+    /// # Arguments
+    ///
+    /// * self - the iterator of Nodes to build the tree from
+    ///
+    /// # Return
+    ///
+    /// The root node of the built tree, if it was successfully built.
+    fn build_tree(self) -> Option<Self::Node>;
 }
 
-impl<T: Iterator> BinTree for T
+impl<T: Iterator> BuildTreeEx for T
 where
     T::Item: Node,
 {
-    type Result = T::Item;
-    fn bin_tree(self) -> Option<Self::Result> {
-        let state = State::new(&self);
-        self.fold(state, State::fold_op).collect()
+    type Node = T::Item;
+    fn build_tree(self) -> Option<Self::Node> {
+        let state = BuildTreeState::new(&self);
+        self.fold(state, BuildTreeState::fold_op).collect()
     }
 }
 
@@ -97,18 +121,18 @@ mod tests {
     struct Sum(usize);
 
     impl Node for Sum {
-        fn new2(&self, right: &Self) -> Self {
+        fn new_parent2(&self, right: &Self) -> Self {
             Sum(self.0 + right.0)
         }
 
-        fn new1(&self) -> Self {
+        fn new_parent1(&self) -> Self {
             self.clone()
         }
     }
 
     #[test]
     fn sum() {
-        let x = (0..10).map(|v| Sum(v)).bin_tree();
+        let x = (0..10).map(|v| Sum(v)).build_tree();
         assert_eq!(x, Some(Sum(45)));
     }
 
