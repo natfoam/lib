@@ -10,7 +10,7 @@ mod node;
 mod stack;
 
 pub trait IteratorEx {
-    type Item: Node;
+    type Node: Node;
     /// Builds a binary tree from an iterator of Nodes
     ///
     /// # Arguments
@@ -20,7 +20,7 @@ pub trait IteratorEx {
     /// # Return
     ///
     /// The root node of the built tree, if it was successfully built.
-    fn build_tree(self) -> Option<Self::Item>;
+    fn build_tree(self) -> Option<Self::Node>;
 }
 
 /// The trait extends the functionality of the standard `Iterator` trait by adding
@@ -29,8 +29,8 @@ impl<T: Iterator> IteratorEx for T
 where
     T::Item: Node,
 {
-    type Item = T::Item;
-    fn build_tree(self) -> Option<Self::Item> {
+    type Node = T::Item;
+    fn build_tree(self) -> Option<Self::Node> {
         let state = BuildTreeState::<_, Vec<_>>::new(&self);
         self.fold(state, BuildTreeState::fold_op).collect()
     }

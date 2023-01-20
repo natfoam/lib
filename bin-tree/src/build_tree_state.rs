@@ -9,9 +9,9 @@ fn state_capacity(i: &impl Iterator) -> usize {
 }
 
 #[repr(transparent)]
-pub struct BuildTreeState<T: Node, S: Stack<Item = (T, usize)>>(S);
+pub struct BuildTreeState<T: Node, S: Stack<Node = (T, usize)>>(S);
 
-impl<T: Node, S: Stack<Item = (T, usize)>> BuildTreeState<T, S>
+impl<T: Node, S: Stack<Node = (T, usize)>> BuildTreeState<T, S>
 {
     pub fn new(i: &impl Iterator<Item = T>) -> Self {
         Self(S::with_capacity(state_capacity(i)))
@@ -104,7 +104,7 @@ mod tests {
     }
 
     impl<T> Stack for DebugStack<T> {
-        type Item = T;
+        type Node = T;
         type RevIterator = Rev<<Vec<T> as IntoIterator>::IntoIter>;
         fn with_capacity(capacity: usize) -> Self {
             Self {
