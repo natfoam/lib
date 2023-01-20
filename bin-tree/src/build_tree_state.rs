@@ -104,12 +104,6 @@ mod tests {
         usage: usize,
     }
 
-    impl<T> DebugStack<T> {
-        pub fn usage(&self) -> usize {
-            self.usage
-        }
-    }
-
     impl<T> Stack for DebugStack<T> {
         fn with_capacity(capacity: usize) -> Self {
             Self {
@@ -141,7 +135,10 @@ mod tests {
             let c = state_capacity(&i);
             let state = BuildTreeState::<_, DebugStack<_>>::new(&i);
             let new_state = i.fold(state, BuildTreeState::fold_op);
-            assert_eq!(new_state.0.usage(), c);
+            // maximum usage should be equal to `c`.
+            assert_eq!(new_state.0.usage, c);
+            // the size of the final stack state should be a number of `1` bits in `n`.
+            assert_eq!(new_state.0.vec.len(), n.count_ones() as usize, "n: {n}");
             new_state.collect().map(|v| v.0)
         };
         assert_eq!(f(0), None);
