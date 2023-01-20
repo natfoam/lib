@@ -39,12 +39,12 @@ mod tests {
     struct Sum(usize);
 
     impl Node for Sum {
-        fn new_parent2(&self, right: &Self) -> Self {
+        fn new_parent2(self, right: Self) -> Self {
             Sum(self.0 + right.0)
         }
 
-        fn new_parent1(&self) -> Self {
-            self.clone()
+        fn new_parent1(self) -> Self {
+            self
         }
     }
 

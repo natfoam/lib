@@ -1,7 +1,7 @@
 # Binary Tree Builder
 
-The library provides an `IteratorEx` trait that has a `build_tree` function for any iterator of nodes that implement the `Node` trait.
-The build_tree function returns the root node of the built tree if it was successfully built, otherwise it returns `None` if the provided
+The library provides an `IteratorEx` trait that has a `build_tree` method for any iterator of nodes that implement the `Node` trait.
+The `build_tree` function returns the root node of the built tree if it was successfully built, otherwise it returns `None` if the provided
 iterator is empty.
 
 ## Node trait
