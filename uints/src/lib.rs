@@ -79,18 +79,18 @@ pub trait Number: Common {
 }
 
 impl Common for u8 {
-    const ZERO: u8 = 0;
-    const ONE: u8 = 1;
-    const MAX: u8 = u8::MAX;
+    const ZERO: Self = 0;
+    const ONE: Self = 1;
+    const MAX: Self = Self::MAX;
     type Array = [u8; 1];
     fn leading_zeros(&self) -> u8 {
-        u8::leading_zeros(*self) as u8
+        Self::leading_zeros(*self) as u8
     }
     fn trailing_zeros(&self) -> u8 {
-        u8::trailing_zeros(*self) as u8
+        Self::trailing_zeros(*self) as u8
     }
     fn count_ones(&self) -> u8 {
-        u8::count_ones(*self) as u8
+        Self::count_ones(*self) as u8
     }
 }
 
@@ -116,18 +116,18 @@ pub const fn u16_new(v: u16) -> U16 {
 }
 
 impl Common for u16 {
-    const ZERO: u16 = 0;
-    const ONE: u16 = 1;
-    const MAX: u16 = u16::MAX;
+    const ZERO: Self = 0;
+    const ONE: Self = 1;
+    const MAX: Self = Self::MAX;
     type Array = [u8; 2];
     fn leading_zeros(&self) -> u8 {
-        u16::leading_zeros(*self) as u8
+        Self::leading_zeros(*self) as u8
     }
     fn trailing_zeros(&self) -> u8 {
-        u16::trailing_zeros(*self) as u8
+        Self::trailing_zeros(*self) as u8
     }
     fn count_ones(&self) -> u8 {
-        u16::count_ones(*self) as u8
+        Self::count_ones(*self) as u8
     }
 }
 
@@ -154,18 +154,18 @@ pub const fn u32_new(v: u32) -> U32 {
 }
 
 impl Common for u32 {
-    const ZERO: u32 = 0;
-    const ONE: u32 = 1;
-    const MAX: u32 = u32::MAX;
+    const ZERO: Self = 0;
+    const ONE: Self = 1;
+    const MAX: Self = Self::MAX;
     type Array = [u8; 4];
     fn leading_zeros(&self) -> u8 {
-        u32::leading_zeros(*self) as u8
+        Self::leading_zeros(*self) as u8
     }
     fn trailing_zeros(&self) -> u8 {
-        u32::trailing_zeros(*self) as u8
+        Self::trailing_zeros(*self) as u8
     }
     fn count_ones(&self) -> u8 {
-        u32::count_ones(*self) as u8
+        Self::count_ones(*self) as u8
     }
 }
 
@@ -192,18 +192,18 @@ pub const fn u64_new(v: u64) -> U64 {
 }
 
 impl Common for u64 {
-    const ZERO: u64 = 0;
-    const ONE: u64 = 1;
-    const MAX: u64 = u64::MAX;
+    const ZERO: Self = 0;
+    const ONE: Self = 1;
+    const MAX: Self = Self::MAX;
     type Array = [u8; 8];
     fn leading_zeros(&self) -> u8 {
-        u64::leading_zeros(*self) as u8
+        Self::leading_zeros(*self) as u8
     }
     fn trailing_zeros(&self) -> u8 {
-        u64::trailing_zeros(*self) as u8
+        Self::trailing_zeros(*self) as u8
     }
     fn count_ones(&self) -> u8 {
-        u64::count_ones(*self) as u8
+        Self::count_ones(*self) as u8
     }
 }
 
@@ -211,21 +211,14 @@ impl Lsb0Array for u64 {
     fn lsb0_array(&self) -> [u8; 8] {
         let x = u64_new(*self);
         [
-            x[0][0][0],
-            //
-            x[0][0][1],
-            //
-            x[0][1][0],
-            //
-            x[0][1][1],
-            //
-            x[1][0][0],
-            //
-            x[1][0][1],
-            //
-            x[1][1][0],
-            //
-            x[1][1][1],
+            x[0][0][0], //
+            x[0][0][1], //
+            x[0][1][0], //
+            x[0][1][1], //
+            x[1][0][0], //
+            x[1][0][1], //
+            x[1][1][0], //
+            x[1][1][1], //
         ]
     }
 }
@@ -246,18 +239,18 @@ pub const fn u128_new(v: u128) -> U128 {
 }
 
 impl Common for u128 {
-    const ZERO: u128 = 0;
-    const ONE: u128 = 1;
-    const MAX: u128 = u128::MAX;
+    const ZERO: Self = 0;
+    const ONE: Self = 1;
+    const MAX: Self = Self::MAX;
     type Array = [u8; 16];
     fn leading_zeros(&self) -> u8 {
-        u128::leading_zeros(*self) as u8
+        Self::leading_zeros(*self) as u8
     }
     fn trailing_zeros(&self) -> u8 {
-        u128::trailing_zeros(*self) as u8
+        Self::trailing_zeros(*self) as u8
     }
     fn count_ones(&self) -> u8 {
-        u128::count_ones(*self) as u8
+        Self::count_ones(*self) as u8
     }
 }
 
@@ -314,6 +307,22 @@ impl Number for u8 {
         let result = *self & m;
         *self &= u8::MAX - m;
         result
+    }
+}
+
+impl Common for usize {
+    const ZERO: Self = 0;
+    const ONE: Self = 1;
+    const MAX: Self = Self::MAX;
+    type Array = [u8; (Self::BITS / 8) as usize];
+    fn leading_zeros(&self) -> u8 {
+        Self::leading_zeros(*self) as u8
+    }
+    fn trailing_zeros(&self) -> u8 {
+        Self::trailing_zeros(*self) as u8
+    }
+    fn count_ones(&self) -> u8 {
+        Self::count_ones(*self) as u8
     }
 }
 

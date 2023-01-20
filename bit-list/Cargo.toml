@@ -1,6 +1,6 @@
 [package]
 name = "bit-list"
-version = "0.25.0"
+version = "0.25.1"
 authors = ["natfoam"]
 edition = "2021"
 description = "A lazy list of bits"
@@ -10,6 +10,6 @@ repository = "https://github.com/natfoam/lib"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-uints = { path = "../uints", version = "0.8.0" }
+uints = { path = "../uints", version = "0.8.1" }
 list-fn = { path = "../list-fn", version = "0.19.1" }
-lim-bit-vec = { path = "../lim-bit-vec", version = "0.5.0" }
+lim-bit-vec = { path = "../lim-bit-vec", version = "0.5.1" }
