@@ -1,6 +1,6 @@
 use uints::Common;
 
-use crate::{node::Node, stack::Stack};
+use crate::{node::Node, stack::{DebugStack, Stack}};
 
 fn state_capacity(i: &impl Iterator) -> usize {
     let (min, max) = i.size_hint();
@@ -9,11 +9,11 @@ fn state_capacity(i: &impl Iterator) -> usize {
 }
 
 #[repr(transparent)]
-pub struct BuildTreeState<T: Node>(Stack<(T, usize)>);
+pub struct BuildTreeState<T: Node>(DebugStack<(T, usize)>);
 
 impl<T: Node> BuildTreeState<T> {
     pub fn new(i: &impl Iterator<Item = T>) -> Self {
-        Self(Stack::with_capacity(state_capacity(i)))
+        Self(DebugStack::with_capacity(state_capacity(i)))
     }
 
     // 00 => 0 []
