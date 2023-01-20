@@ -1,4 +1,4 @@
-use uints::{u128_new, u16_new, Common, Number};
+use uints::{u128_new, u16_new, Common, Lsb0Array, Number};
 
 #[derive(Debug, PartialEq, PartialOrd, Default)]
 pub struct U144 {
@@ -36,6 +36,9 @@ impl Common for U144 {
     fn count_ones(&self) -> u8 {
         (self.hi.count_ones() + self.lo.count_ones()) as u8
     }
+}
+
+impl Lsb0Array for U144 {
     fn lsb0_array(&self) -> [u8; 18] {
         let lo = u16_new(self.lo);
         let hi = u128_new(self.hi);
