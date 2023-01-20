@@ -1,6 +1,9 @@
 use uints::Common;
 
-use crate::{node::Node, stack::{DebugStack, Stack}};
+use crate::{
+    node::Node,
+    stack::Stack,
+};
 
 fn state_capacity(i: &impl Iterator) -> usize {
     let (min, max) = i.size_hint();
@@ -9,11 +12,16 @@ fn state_capacity(i: &impl Iterator) -> usize {
 }
 
 #[repr(transparent)]
-pub struct BuildTreeState<T: Node>(DebugStack<(T, usize)>);
+pub struct BuildTreeState<T: Node, S: Stack<Item = (T, usize)>>(S)
+where
+    S::IntoIter: DoubleEndedIterator;
 
-impl<T: Node> BuildTreeState<T> {
+impl<T: Node, S: Stack<Item = (T, usize)>> BuildTreeState<T, S>
+where
+    S::IntoIter: DoubleEndedIterator,
+{
     pub fn new(i: &impl Iterator<Item = T>) -> Self {
-        Self(DebugStack::with_capacity(state_capacity(i)))
+        Self(S::with_capacity(state_capacity(i)))
     }
 
     // 00 => 0 []
@@ -94,12 +102,47 @@ mod tests {
         }
     }
 
+    pub struct DebugStack<T> {
+        vec: Vec<T>,
+        usage: usize,
+    }
+
+    impl<T> DebugStack<T> {
+        pub fn usage(&self) -> usize {
+            self.usage
+        }
+    }
+
+    impl<T> Stack for DebugStack<T> {
+        fn with_capacity(capacity: usize) -> Self {
+            Self {
+                vec: Vec::with_capacity(capacity),
+                usage: 0,
+            }
+        }
+        fn push(&mut self, value: T) {
+            self.vec.push(value);
+            self.usage = self.usage.max(self.vec.len());
+        }
+        fn pop(&mut self) -> Option<T> {
+            self.vec.pop()
+        }
+    }
+
+    impl<T> IntoIterator for DebugStack<T> {
+        type Item = T;
+        type IntoIter = <Vec<T> as IntoIterator>::IntoIter;
+        fn into_iter(self) -> Self::IntoIter {
+            self.vec.into_iter()
+        }
+    }
+
     #[test]
     fn sum() {
         let f = |n| -> Option<usize> {
             let i = (0..n).map(|v| Sum(v));
             let c = state_capacity(&i);
-            let state = BuildTreeState::new(&i);
+            let state = BuildTreeState::<_, DebugStack<_>>::new(&i);
             let new_state = i.fold(state, BuildTreeState::fold_op);
             assert_eq!(new_state.0.usage(), c);
             new_state.collect().map(|v| v.0)

@@ -27,7 +27,7 @@ where
 {
     type Item = T::Item;
     fn build_tree(self) -> Option<Self::Item> {
-        let state = BuildTreeState::new(&self);
+        let state = BuildTreeState::<_, Vec<_>>::new(&self);
         self.fold(state, BuildTreeState::fold_op).collect()
     }
 }
