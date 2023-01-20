@@ -1,6 +1,6 @@
 [package]
 name = "lim-bit-vec"
-version = "0.4.2"
+version = "0.5.0"
 authors = ["natfoam"]
 edition = "2021"
 description = "Limited bit vectors"
@@ -10,5 +10,5 @@ repository = "https://github.com/natfoam/lib"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-uints = { path = "../uints", version = "0.7.0" }
+uints = { path = "../uints", version = "0.8.0" }
 list-fn = { path = "../list-fn", version = "0.19.1" }

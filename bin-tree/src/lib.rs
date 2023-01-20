@@ -1,8 +1,9 @@
-use build_tree_state::BuildTreeState;
+use build_tree_state::{collect, fold_op, new};
 pub use node::Node;
 
 mod build_tree_state;
 mod node;
+mod stack;
 
 pub trait IteratorEx {
     type Item: Node;
@@ -26,8 +27,8 @@ where
 {
     type Item = T::Item;
     fn build_tree(self) -> Option<Self::Item> {
-        let state = BuildTreeState::new(&self);
-        self.fold(state, BuildTreeState::fold_op).collect()
+        let state = new(&self);
+        collect(self.fold(state, fold_op))
     }
 }
 

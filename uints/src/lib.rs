@@ -15,10 +15,13 @@ pub trait Common: Default + PartialOrd + Debug {
     fn leading_zeros(&self) -> u8;
     fn trailing_zeros(&self) -> u8;
     fn count_ones(&self) -> u8;
-    fn lsb0_array(&self) -> Self::Array;
     fn log2(&self) -> u8 {
         Self::BITS - 1 - self.leading_zeros()
     }
+}
+
+pub trait Lsb0Array: Common {
+    fn lsb0_array(&self) -> Self::Array;
 }
 
 pub trait UInt:
@@ -26,6 +29,7 @@ pub trait UInt:
     + Ord
     + Eq
     + Common
+    + Lsb0Array
     + Sub<Output = Self>
     + Add<Output = Self>
     + AddAssign
@@ -88,6 +92,9 @@ impl Common for u8 {
     fn count_ones(&self) -> u8 {
         u8::count_ones(*self) as u8
     }
+}
+
+impl Lsb0Array for u8 {
     fn lsb0_array(&self) -> [u8; 1] {
         [*self]
     }
@@ -122,6 +129,9 @@ impl Common for u16 {
     fn count_ones(&self) -> u8 {
         u16::count_ones(*self) as u8
     }
+}
+
+impl Lsb0Array for u16 {
     fn lsb0_array(&self) -> [u8; 2] {
         let x = u16_new(*self);
         [x[0], x[1]]
@@ -157,6 +167,9 @@ impl Common for u32 {
     fn count_ones(&self) -> u8 {
         u32::count_ones(*self) as u8
     }
+}
+
+impl Lsb0Array for u32 {
     fn lsb0_array(&self) -> [u8; 4] {
         let x = u32_new(*self);
         [x[0][0], x[0][1], x[1][0], x[1][1]]
@@ -192,10 +205,26 @@ impl Common for u64 {
     fn count_ones(&self) -> u8 {
         u64::count_ones(*self) as u8
     }
+}
+
+impl Lsb0Array for u64 {
     fn lsb0_array(&self) -> [u8; 8] {
         let x = u64_new(*self);
         [
-            x[0][0][0], x[0][0][1], x[0][1][0], x[0][1][1], x[1][0][0], x[1][0][1], x[1][1][0],
+            x[0][0][0],
+            //
+            x[0][0][1],
+            //
+            x[0][1][0],
+            //
+            x[0][1][1],
+            //
+            x[1][0][0],
+            //
+            x[1][0][1],
+            //
+            x[1][1][0],
+            //
             x[1][1][1],
         ]
     }
@@ -230,6 +259,9 @@ impl Common for u128 {
     fn count_ones(&self) -> u8 {
         u128::count_ones(*self) as u8
     }
+}
+
+impl Lsb0Array for u128 {
     fn lsb0_array(&self) -> [u8; 16] {
         let x = u128_new(*self);
         [
