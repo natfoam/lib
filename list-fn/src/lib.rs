@@ -1,3 +1,4 @@
+#![no_std]
 mod collect;
 mod collection;
 mod empty;
@@ -38,6 +39,9 @@ pub use take::*;
 
 #[cfg(test)]
 mod tests {
+    extern crate alloc;
+    use alloc::vec::Vec;
+
     use super::*;
 
     struct Ref<'a>(&'a mut u32);
@@ -85,13 +89,13 @@ mod tests {
     fn as_ref() {
         let mut i = 0;
         let v = Ref(&mut i).iter().collect::<Vec<u32>>();
-        assert_eq!(v, vec![0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+        assert_eq!(v, &[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
     }
 
     #[test]
     fn as_range() {
         let v = Range10(0).collect(Vec::default());
-        assert_eq!(v.collection, vec![0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+        assert_eq!(v.collection, &[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
     }
 
     #[test]
@@ -99,7 +103,7 @@ mod tests {
         {
             let a = Some(5);
             let v = a.iter().collect::<Vec<u32>>();
-            assert_eq!(v, vec![5]);
+            assert_eq!(v, &[5]);
         }
         {
             let a = None;
@@ -114,6 +118,6 @@ mod tests {
         for elem in Range10(2).iter() {
             v.push(elem);
         }
-        assert_eq!(v, vec![2, 3, 4, 5, 6, 7, 8, 9])
+        assert_eq!(v, &[2, 3, 4, 5, 6, 7, 8, 9])
     }
 }

@@ -1,3 +1,5 @@
+#![no_std]
+
 mod compose;
 mod flat_map;
 mod flat_scan;

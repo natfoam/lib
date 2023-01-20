@@ -1,3 +1,7 @@
+#![no_std]
+extern crate alloc;
+
+use alloc::vec::Vec;
 use build_tree_state::BuildTreeState;
 pub use node::Node;
 

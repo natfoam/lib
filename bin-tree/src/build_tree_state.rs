@@ -84,6 +84,8 @@ where
 
 #[cfg(test)]
 mod tests {
+    use alloc::vec::Vec;
+
     use super::*;
 
     #[derive(Clone, Default, PartialEq, Eq, Debug)]

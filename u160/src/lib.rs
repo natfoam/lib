@@ -1,3 +1,4 @@
+#![no_std]
 pub struct U160(pub [u32; 5]);
 
 impl U160 {

@@ -1,3 +1,5 @@
+use alloc::vec::Vec;
+
 pub trait Stack: IntoIterator
 where
     Self::IntoIter: DoubleEndedIterator,

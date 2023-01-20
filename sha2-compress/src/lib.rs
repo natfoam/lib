@@ -1,3 +1,4 @@
+#![no_std]
 use fixed_array::Array;
 use uints::UInt;
 
