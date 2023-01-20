@@ -17,6 +17,9 @@ impl<T> Stack<T> {
     pub fn pop(&mut self) -> Option<T> {
         self.vec.pop()
     }
+    pub fn usage(&self) -> usize {
+        self.usage
+    }
 }
 
 impl<T> IntoIterator for Stack<T> {

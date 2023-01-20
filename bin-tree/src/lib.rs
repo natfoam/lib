@@ -1,4 +1,4 @@
-use build_tree_state::{collect, fold_op, new};
+use build_tree_state::BuildTreeState;
 pub use node::Node;
 
 mod build_tree_state;
@@ -27,8 +27,8 @@ where
 {
     type Item = T::Item;
     fn build_tree(self) -> Option<Self::Item> {
-        let state = new(&self);
-        collect(self.fold(state, fold_op))
+        let state = BuildTreeState::new(&self);
+        self.fold(state, BuildTreeState::fold_op).collect()
     }
 }
 
