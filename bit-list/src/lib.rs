@@ -1,7 +1,7 @@
 #![no_std]
+use core::marker::PhantomData;
 use lim_bit_vec::BitVec;
 use list_fn::{FlatMap, FlatMapFn, FlatMapList, ListFn, ResultFn};
-use core::marker::PhantomData;
 use uints::UInt;
 
 pub struct Lsb0FlatMap<T: UInt>(PhantomData<T>);

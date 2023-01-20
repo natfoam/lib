@@ -1,6 +1,6 @@
 extern crate alloc;
 
-use alloc::{vec::Vec, collections::BTreeSet};
+use alloc::{collections::BTreeSet, vec::Vec};
 
 pub trait Collection {
     type Item;
