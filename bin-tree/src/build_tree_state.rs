@@ -9,9 +9,9 @@ fn state_capacity(i: &impl Iterator) -> usize {
 }
 
 #[repr(transparent)]
-pub struct BuildTreeState<T: Node, S: Stack<Node = (T, usize)>>(S);
+pub struct BuildTreeState<T: Node, S: Stack<Node = T>>(S);
 
-impl<T: Node, S: Stack<Node = (T, usize)>> BuildTreeState<T, S>
+impl<T: Node, S: Stack<Node = T>> BuildTreeState<T, S>
 {
     pub fn new(i: &impl Iterator<Item = T>) -> Self {
         Self(S::with_capacity(state_capacity(i)))
@@ -99,24 +99,24 @@ mod tests {
     }
 
     pub struct DebugStack<T> {
-        vec: Vec<T>,
+        vec: Vec<(T, u8)>,
         usage: usize,
     }
 
     impl<T> Stack for DebugStack<T> {
         type Node = T;
-        type RevIterator = Rev<<Vec<T> as IntoIterator>::IntoIter>;
+        type RevIterator = Rev<<Vec<(T, u8)> as IntoIterator>::IntoIter>;
         fn with_capacity(capacity: usize) -> Self {
             Self {
                 vec: Vec::with_capacity(capacity),
                 usage: 0,
             }
         }
-        fn push(&mut self, value: T) {
+        fn push(&mut self, value: (T, u8)) {
             self.vec.push(value);
             self.usage = self.usage.max(self.vec.len());
         }
-        fn pop(&mut self) -> Option<T> {
+        fn pop(&mut self) -> Option<(T, u8)> {
             self.vec.pop()
         }
         fn rev_iter(self) -> Self::RevIterator {
