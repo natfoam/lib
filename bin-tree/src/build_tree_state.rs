@@ -132,11 +132,11 @@ mod tests {
     fn sum() {
         let f = |n| -> Option<usize> {
             let i = (0..n).map(|v| Sum(v));
-            let c = state_capacity(&i);
+            let capacity = state_capacity(&i);
             let state = BuildTreeState::<_, DebugStack<_>>::new(&i);
             let new_state = i.fold(state, BuildTreeState::fold_op);
-            // maximum usage should be equal to `c`.
-            assert_eq!(new_state.0.usage, c);
+            // maximum usage should be equal to `capacity`.
+            assert_eq!(new_state.0.usage, capacity);
             // the size of the final stack state should be a number of `1` bits in `n`.
             assert_eq!(new_state.0.vec.len(), n.count_ones() as usize, "n: {n}");
             new_state.collect().map(|v| v.0)
