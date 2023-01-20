@@ -9,13 +9,9 @@ fn state_capacity(i: &impl Iterator) -> usize {
 }
 
 #[repr(transparent)]
-pub struct BuildTreeState<T: Node, S: Stack<Item = (T, usize)>>(S)
-where
-    S::IntoIter: DoubleEndedIterator;
+pub struct BuildTreeState<T: Node, S: Stack<Item = (T, usize)>>(S);
 
 impl<T: Node, S: Stack<Item = (T, usize)>> BuildTreeState<T, S>
-where
-    S::IntoIter: DoubleEndedIterator,
 {
     pub fn new(i: &impl Iterator<Item = T>) -> Self {
         Self(S::with_capacity(state_capacity(i)))
@@ -69,8 +65,7 @@ where
 
     pub fn collect(self) -> Option<T> {
         self.0
-            .into_iter()
-            .rev()
+            .rev_iter()
             .reduce(|(mut right, mut right_level), (left, left_level)| {
                 while left_level > right_level {
                     right = right.new_parent1();
@@ -84,6 +79,8 @@ where
 
 #[cfg(test)]
 mod tests {
+    use core::iter::Rev;
+
     use alloc::vec::Vec;
 
     use super::*;
@@ -107,6 +104,8 @@ mod tests {
     }
 
     impl<T> Stack for DebugStack<T> {
+        type Item = T;
+        type RevIterator = Rev<<Vec<T> as IntoIterator>::IntoIter>;
         fn with_capacity(capacity: usize) -> Self {
             Self {
                 vec: Vec::with_capacity(capacity),
@@ -120,13 +119,8 @@ mod tests {
         fn pop(&mut self) -> Option<T> {
             self.vec.pop()
         }
-    }
-
-    impl<T> IntoIterator for DebugStack<T> {
-        type Item = T;
-        type IntoIter = <Vec<T> as IntoIterator>::IntoIter;
-        fn into_iter(self) -> Self::IntoIter {
-            self.vec.into_iter()
+        fn rev_iter(self) -> Self::RevIterator {
+            self.vec.rev_iter()
         }
     }
 

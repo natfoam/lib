@@ -90,7 +90,7 @@ impl Number for U144 {
             self.hi |= 1 << (i - 16);
         }
     }
-    fn is_set(&mut self, i: u8) -> bool {
+    fn is_set(&self, i: u8) -> bool {
         if i < 16 {
             (self.lo >> i) & 1 != 0
         } else {

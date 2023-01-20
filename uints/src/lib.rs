@@ -74,7 +74,7 @@ pub trait UInt:
 pub trait Number: Common {
     fn set(&mut self, i: u8);
     fn unset(&mut self, i: u8);
-    fn is_set(&mut self, i: u8) -> bool;
+    fn is_set(&self, i: u8) -> bool;
     fn add(&mut self, v: u32);
     fn subtract(&mut self, v: u8);
     fn mask(&mut self, m: u8) -> u8;
@@ -296,7 +296,7 @@ impl Number for u8 {
     fn set(&mut self, i: u8) {
         *self |= 1 << i;
     }
-    fn is_set(&mut self, i: u8) -> bool {
+    fn is_set(&self, i: u8) -> bool {
         (*self >> i) & 1 != 0
     }
     fn add(&mut self, v: u32) {
@@ -309,6 +309,121 @@ impl Number for u8 {
         let result = *self & m;
         *self &= u8::MAX - m;
         result
+    }
+}
+
+impl Number for u16 {
+    fn unset(&mut self, i: u8) {
+        *self &= !(1 << i)
+    }
+    fn set(&mut self, i: u8) {
+        *self |= 1 << i;
+    }
+    fn is_set(&self, i: u8) -> bool {
+        (self >> i) & 1 != 0
+    }
+    fn add(&mut self, v: u32) {
+        *self += v as Self;
+    }
+    fn subtract(&mut self, v: u8) {
+        *self -= v as Self;
+    }
+    fn mask(&mut self, m: u8) -> u8 {
+        let result = *self & m as Self;
+        *self &= Self::MAX - m as Self;
+        result as u8
+    }
+}
+
+impl Number for u32 {
+    fn unset(&mut self, i: u8) {
+        *self &= !(1 << i)
+    }
+    fn set(&mut self, i: u8) {
+        *self |= 1 << i;
+    }
+    fn is_set(&self, i: u8) -> bool {
+        (self >> i) & 1 != 0
+    }
+    fn add(&mut self, v: u32) {
+        *self += v as Self;
+    }
+    fn subtract(&mut self, v: u8) {
+        *self -= v as Self;
+    }
+    fn mask(&mut self, m: u8) -> u8 {
+        let result = *self & m as Self;
+        *self &= Self::MAX - m as Self;
+        result as u8
+    }
+}
+
+impl Number for u64 {
+    fn unset(&mut self, i: u8) {
+        *self &= !(1 << i)
+    }
+    fn set(&mut self, i: u8) {
+        *self |= 1 << i;
+    }
+    fn is_set(&self, i: u8) -> bool {
+        (self >> i) & 1 != 0
+    }
+    fn add(&mut self, v: u32) {
+        *self += v as Self;
+    }
+    fn subtract(&mut self, v: u8) {
+        *self -= v as Self;
+    }
+    fn mask(&mut self, m: u8) -> u8 {
+        let result = *self & m as Self;
+        *self &= Self::MAX - m as Self;
+        result as u8
+    }
+}
+
+impl Number for u128 {
+    fn unset(&mut self, i: u8) {
+        *self &= !(1 << i)
+    }
+    fn set(&mut self, i: u8) {
+        *self |= 1 << i;
+    }
+    fn is_set(&self, i: u8) -> bool {
+        (self >> i) & 1 != 0
+    }
+    fn add(&mut self, v: u32) {
+        *self += v as Self;
+    }
+    fn subtract(&mut self, v: u8) {
+        *self -= v as Self;
+    }
+    fn mask(&mut self, m: u8) -> u8 {
+        let result = *self & m as Self;
+        *self &= Self::MAX - m as Self;
+        result as u8
+    }
+}
+
+impl Number for usize {
+    fn unset(&mut self, i: u8) {
+        *self &= !(1 << i)
+    }
+    fn set(&mut self, i: u8) {
+        *self |= 1 << i;
+    }
+    fn is_set(&self, i: u8) -> bool {
+        (self >> i) & 1 != 0
+    }
+    fn add(&mut self, v: u32) {
+        *self += v as Self;
+    }
+    fn subtract(&mut self, v: u8) {
+        *self -= v as Self;
+    }
+    fn mask(&mut self, m: u8) -> u8 {
+        let result = *self & m as Self;
+        *self &= Self::MAX - m as Self;
+        result as u8
     }
 }
 
