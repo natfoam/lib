@@ -1,9 +1,6 @@
 use uints::Common;
 
-use crate::{
-    node::Node,
-    stack::Stack,
-};
+use crate::{node::Node, stack::Stack};
 
 fn state_capacity(i: &impl Iterator) -> usize {
     let (min, max) = i.size_hint();

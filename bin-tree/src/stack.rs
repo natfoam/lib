@@ -1,5 +1,6 @@
 pub trait Stack: IntoIterator
-where Self::IntoIter: DoubleEndedIterator
+where
+    Self::IntoIter: DoubleEndedIterator,
 {
     fn with_capacity(capacity: usize) -> Self;
     fn push(&mut self, value: Self::Item);
