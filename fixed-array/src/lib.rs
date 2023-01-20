@@ -1,4 +1,5 @@
-use std::ops::IndexMut;
+#![no_std]
+use core::ops::IndexMut;
 
 pub trait Array: Sized + IndexMut<usize>
 where

@@ -1,3 +1,7 @@
+#![no_std]
+extern crate alloc;
+
+use alloc::vec::Vec;
 use build_tree_state::BuildTreeState;
 pub use node::Node;
 
@@ -27,7 +31,7 @@ where
 {
     type Item = T::Item;
     fn build_tree(self) -> Option<Self::Item> {
-        let state = BuildTreeState::new(&self);
+        let state = BuildTreeState::<_, Vec<_>>::new(&self);
         self.fold(state, BuildTreeState::fold_op).collect()
     }
 }

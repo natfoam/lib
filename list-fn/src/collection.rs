@@ -1,6 +1,6 @@
-use std::collections::{BTreeSet, HashSet};
+extern crate alloc;
 
-use std::hash::Hash;
+use alloc::{collections::BTreeSet, vec::Vec};
 
 pub trait Collection {
     type Item;
@@ -12,15 +12,6 @@ impl<T> Collection for Vec<T> {
 
     fn add(mut self, item: Self::Item) -> Self {
         self.push(item);
-        self
-    }
-}
-
-impl<T: Hash + Eq> Collection for HashSet<T> {
-    type Item = T;
-
-    fn add(mut self, item: Self::Item) -> Self {
-        self.insert(item);
         self
     }
 }

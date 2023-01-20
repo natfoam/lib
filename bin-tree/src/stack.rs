@@ -1,31 +1,24 @@
-pub struct Stack<T> {
-    vec: Vec<T>,
-    usage: usize,
+use alloc::vec::Vec;
+
+pub trait Stack: IntoIterator
+where
+    Self::IntoIter: DoubleEndedIterator,
+{
+    fn with_capacity(capacity: usize) -> Self;
+    fn push(&mut self, value: Self::Item);
+    fn pop(&mut self) -> Option<Self::Item>;
 }
 
-impl<T> Stack<T> {
-    pub fn with_capacity(capacity: usize) -> Self {
-        Self {
-            vec: Vec::with_capacity(capacity),
-            usage: 0,
-        }
+impl<T> Stack for Vec<T> {
+    fn with_capacity(capacity: usize) -> Self {
+        Self::with_capacity(capacity)
     }
-    pub fn push(&mut self, value: T) {
-        self.vec.push(value);
-        self.usage = self.usage.max(self.vec.len());
-    }
-    pub fn pop(&mut self) -> Option<T> {
-        self.vec.pop()
-    }
-    pub fn usage(&self) -> usize {
-        self.usage
-    }
-}
 
-impl<T> IntoIterator for Stack<T> {
-    type Item = T;
-    type IntoIter = <Vec<T> as IntoIterator>::IntoIter;
-    fn into_iter(self) -> Self::IntoIter {
-        self.vec.into_iter()
+    fn push(&mut self, value: Self::Item) {
+        self.push(value)
+    }
+
+    fn pop(&mut self) -> Option<Self::Item> {
+        self.pop()
     }
 }

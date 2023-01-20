@@ -1,3 +1,4 @@
+#![no_std]
 use list_fn::{Empty, FlatScanFn, Id, ListFn, ListSome, ListState};
 use uints::UInt;
 

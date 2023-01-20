@@ -1,9 +1,11 @@
-use fixed_array::Array;
-use std::fmt::Debug;
-use std::ops::{
+#![no_std]
+
+use core::fmt::Debug;
+use core::ops::{
     Add, AddAssign, BitAnd, BitAndAssign, BitOr, BitOrAssign, BitXor, BitXorAssign, Div, DivAssign,
     Mul, MulAssign, Not, Rem, Shl, ShlAssign, Shr, ShrAssign, Sub,
 };
+use fixed_array::Array;
 
 pub trait Common: Default + PartialOrd + Debug {
     const ZERO: Self;

@@ -1,5 +1,5 @@
 use super::*;
-use std::marker::PhantomData;
+use core::marker::PhantomData;
 
 pub struct FlattenList<I>(PhantomData<I>);
 
