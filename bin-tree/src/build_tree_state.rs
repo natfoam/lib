@@ -9,9 +9,9 @@ fn state_capacity(i: &impl Iterator) -> usize {
 }
 
 #[repr(transparent)]
-pub struct BuildTreeState<T: Node, S: Stack<Node = T>>(S);
+pub struct BuildTreeState<S: Stack>(S);
 
-impl<T: Node, S: Stack<Node = T>> BuildTreeState<T, S> {
+impl<T: Node, S: Stack<Node = T>> BuildTreeState<S> {
     pub fn new(i: &impl Iterator<Item = T>) -> Self {
         Self(S::with_capacity(state_capacity(i)))
     }
@@ -73,7 +73,7 @@ impl<T: Node, S: Stack<Node = T>> BuildTreeState<T, S> {
 
 #[cfg(test)]
 mod tests {
-    use crate::stack::LightStack;
+    use crate::VecStack;
 
     use super::*;
 
@@ -91,22 +91,22 @@ mod tests {
     }
 
     pub struct DebugStack<T: Node> {
-        vec: LightStack<T>,
-        usage: usize,
+        vec: VecStack<T>,
+        max_len: usize,
     }
 
     impl<T: Node> Stack for DebugStack<T> {
         type Node = T;
-        type RevIterator = LightStack<T>;
+        type RevIterator = VecStack<T>;
         fn with_capacity(capacity: usize) -> Self {
             Self {
-                vec: LightStack::with_capacity(capacity),
-                usage: 0,
+                vec: VecStack::with_capacity(capacity),
+                max_len: 0,
             }
         }
         fn push(&mut self, value: (T, u8)) {
             self.vec.push(value);
-            self.usage = self.usage.max(self.vec.stack.len());
+            self.max_len = self.max_len.max(self.vec.stack.len());
         }
         fn pop_if(&mut self, level: u8) -> Option<T> {
             self.vec.pop_if(level)
@@ -121,12 +121,18 @@ mod tests {
         let f = |n| -> Option<usize> {
             let i = (0..n).map(|v| Sum(v));
             let capacity = state_capacity(&i);
-            let state = BuildTreeState::<_, DebugStack<_>>::new(&i);
+            let state = BuildTreeState::<DebugStack<_>>::new(&i);
             let new_state = i.fold(state, BuildTreeState::fold_op);
             // maximum usage should be equal to `capacity`.
-            assert_eq!(new_state.0.usage, capacity);
+            assert_eq!(new_state.0.max_len, capacity);
+            // a `set` should be equivalent to `n` after fold.
+            assert_eq!(new_state.0.vec.set, n);
             // the size of the final stack state should be a number of `1` bits in `n`.
-            assert_eq!(new_state.0.vec.stack.len(), n.count_ones() as usize, "n: {n}");
+            assert_eq!(
+                new_state.0.vec.stack.len(),
+                n.count_ones() as usize,
+                "n: {n}"
+            );
             new_state.collect().map(|v| v.0)
         };
         assert_eq!(f(0), None);

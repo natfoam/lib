@@ -3,11 +3,12 @@ extern crate alloc;
 
 use build_tree_state::BuildTreeState;
 pub use node::Node;
-use stack::LightStack;
+use vec_stack::VecStack;
 
 mod build_tree_state;
 mod node;
 mod stack;
+mod vec_stack;
 
 pub trait IteratorEx {
     type Node: Node;
@@ -31,7 +32,7 @@ where
 {
     type Node = T::Item;
     fn build_tree(self) -> Option<Self::Node> {
-        let state = BuildTreeState::<_, LightStack<_>>::new(&self);
+        let state = BuildTreeState::<VecStack<_>>::new(&self);
         self.fold(state, BuildTreeState::fold_op).collect()
     }
 }
