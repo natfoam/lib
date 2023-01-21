@@ -45,7 +45,7 @@ impl<T: Node, S: Stack<Node = T>> BuildTreeState<T, S> {
     pub fn fold_op(mut self, mut right: T) -> Self {
         let mut right_level = 0;
         loop {
-            match self.0.pop(right_level) {
+            match self.0.pop_if(right_level) {
                 Some(left) => {
                     right = left.new_parent2(right);
                     right_level += 1;
@@ -108,8 +108,8 @@ mod tests {
             self.vec.push(value);
             self.usage = self.usage.max(self.vec.stack.len());
         }
-        fn pop(&mut self, level: u8) -> Option<T> {
-            self.vec.pop(level)
+        fn pop_if(&mut self, level: u8) -> Option<T> {
+            self.vec.pop_if(level)
         }
         fn rev_iter(self) -> Self::RevIterator {
             self.vec.rev_iter()

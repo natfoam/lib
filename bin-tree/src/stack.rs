@@ -9,7 +9,7 @@ pub trait Stack
     type RevIterator: Iterator<Item = (Self::Node, u8)>;
     fn with_capacity(capacity: usize) -> Self;
     fn push(&mut self, value: (Self::Node, u8));
-    fn pop(&mut self, level: u8) -> Option<Self::Node>;
+    fn pop_if(&mut self, level: u8) -> Option<Self::Node>;
     fn rev_iter(self) -> Self::RevIterator;
 }
 
@@ -33,7 +33,7 @@ impl<T: Node> Stack for LightStack<T> {
         self.set.set(value.1);
     }
 
-    fn pop(&mut self, level: u8) -> Option<Self::Node> {
+    fn pop_if(&mut self, level: u8) -> Option<Self::Node> {
         let left_level = self.set.trailing_zeros() as u8;
         if left_level == level {
             self.set.unset(level);
