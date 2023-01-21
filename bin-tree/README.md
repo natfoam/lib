@@ -4,7 +4,7 @@ The library provides an `IteratorEx` trait that has a `build_tree` method for an
 The `build_tree` function returns the root node of the built tree if it was successfully built, otherwise it returns `None` if the provided
 iterator is empty.
 
-## Node trait
+## Node Trait
 
 The `Node` trait represents a node in a binary tree. It provides two methods for creating a new parent node from child nodes:
 

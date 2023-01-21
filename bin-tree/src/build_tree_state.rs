@@ -1,19 +1,11 @@
-use uints::Common;
-
 use crate::{stack::Stack, Node};
-
-fn state_capacity(i: &impl Iterator) -> usize {
-    let (min, max) = i.size_hint();
-    let size = max.unwrap_or(min);
-    (size + 1).log2() as usize
-}
 
 #[repr(transparent)]
 pub struct BuildTreeState<S: Stack>(S);
 
 impl<S: Stack> BuildTreeState<S> {
     pub fn new(i: &impl Iterator<Item = S::Node>) -> Self {
-        Self(S::with_capacity(state_capacity(i)))
+        Self(S::with_capacity(i))
     }
 
     // 00 => 0 []
@@ -96,9 +88,9 @@ mod tests {
 
     impl<T: Node> Stack for DebugStack<T> {
         type Node = T;
-        fn with_capacity(capacity: usize) -> Self {
+        fn with_capacity(i: &impl Iterator) -> Self {
             Self {
-                vec: VecStack::with_capacity(capacity),
+                vec: VecStack::with_capacity(i),
                 max_len: 0,
             }
         }
@@ -122,10 +114,10 @@ mod tests {
     fn sum() {
         let f = |n| -> Option<usize> {
             let i = (0..n).map(|v| Sum(v));
-            let capacity = state_capacity(&i);
             let state = BuildTreeState::<DebugStack<_>>::new(&i);
+            let capacity = state.0.vec.stack.capacity();
             let new_state = i.fold(state, BuildTreeState::fold_op);
-            // maximum usage should be equal to `capacity`.
+            // `max_len` should be equivalent to `capacity`.
             assert_eq!(new_state.0.max_len, capacity);
             // a `set` should be equivalent to `n` after fold.
             assert_eq!(new_state.0.vec.set, n);
