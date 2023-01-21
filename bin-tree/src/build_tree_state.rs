@@ -45,15 +45,10 @@ impl<T: Node, S: Stack<Node = T>> BuildTreeState<T, S> {
     pub fn fold_op(mut self, mut right: T) -> Self {
         let mut right_level = 0;
         loop {
-            match self.0.pop() {
+            match self.0.pop(right_level) {
                 Some(left) => {
-                    if left.1 == right_level {
-                        right = left.0.new_parent2(right);
-                        right_level += 1;
-                    } else {
-                        self.0.push(left);
-                        break;
-                    }
+                    right = left.new_parent2(right);
+                    right_level += 1;
                 }
                 _ => break,
             }
@@ -78,10 +73,6 @@ impl<T: Node, S: Stack<Node = T>> BuildTreeState<T, S> {
 
 #[cfg(test)]
 mod tests {
-    use core::iter::Rev;
-
-    use alloc::vec::Vec;
-
     use crate::stack::LightStack;
 
     use super::*;
@@ -117,8 +108,8 @@ mod tests {
             self.vec.push(value);
             self.usage = self.usage.max(self.vec.stack.len());
         }
-        fn pop(&mut self) -> Option<(T, u8)> {
-            self.vec.pop()
+        fn pop(&mut self, level: u8) -> Option<T> {
+            self.vec.pop(level)
         }
         fn rev_iter(self) -> Self::RevIterator {
             self.vec.rev_iter()
