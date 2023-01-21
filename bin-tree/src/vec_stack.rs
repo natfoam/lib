@@ -10,7 +10,6 @@ pub struct VecStack<T: Node> {
 
 impl<T: Node> Stack for VecStack<T> {
     type Node = T;
-    type RevIterator = Self;
     fn with_capacity(capacity: usize) -> Self {
         Self {
             stack: Vec::with_capacity(capacity),
@@ -31,10 +30,6 @@ impl<T: Node> Stack for VecStack<T> {
         } else {
             None
         }
-    }
-
-    fn rev_iter(self) -> Self::RevIterator {
-        self
     }
 }
 

@@ -59,7 +59,6 @@ impl<S: Stack> BuildTreeState<S> {
 
     pub fn collect(self) -> Option<S::Node> {
         self.0
-            .rev_iter()
             .reduce(|(mut right, mut right_level), (left, left_level)| {
                 while left_level > right_level {
                     right = right.new_parent1();
@@ -97,7 +96,6 @@ mod tests {
 
     impl<T: Node> Stack for DebugStack<T> {
         type Node = T;
-        type RevIterator = VecStack<T>;
         fn with_capacity(capacity: usize) -> Self {
             Self {
                 vec: VecStack::with_capacity(capacity),
@@ -111,8 +109,12 @@ mod tests {
         fn pop_if(&mut self, level: u8) -> Option<T> {
             self.vec.pop_if(level)
         }
-        fn rev_iter(self) -> Self::RevIterator {
-            self.vec.rev_iter()
+    }
+
+    impl<T: Node> Iterator for DebugStack<T> {
+        type Item = (T, u8);
+        fn next(&mut self) -> Option<Self::Item> {
+            self.vec.next()
         }
     }
 
