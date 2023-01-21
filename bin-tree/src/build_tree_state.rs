@@ -1,5 +1,4 @@
-use alloc::vec::Vec;
-use uints::{Common, Number};
+use uints::Common;
 
 use crate::{node::Node, stack::Stack};
 
@@ -7,46 +6,6 @@ fn state_capacity(i: &impl Iterator) -> usize {
     let (min, max) = i.size_hint();
     let size = max.unwrap_or(min);
     (size + 1).log2() as usize
-}
-
-struct LightStack<T: Node> {
-    stack: Vec<T>,
-    set: usize,
-}
-
-impl<T: Node> Stack for LightStack<T> {
-    type Node = T;
-    type RevIterator = Self;
-    fn with_capacity(capacity: usize) -> Self {
-        Self {
-            stack: Vec::with_capacity(capacity),
-            set: 0,
-        }
-    }
-
-    fn push(&mut self, value: (Self::Node, u8)) {
-        self.stack.push(value.0);
-        self.set.set(value.1);
-    }
-
-    fn pop(&mut self) -> Option<(Self::Node, u8)> {
-        self.stack.pop().map(|v| {
-            let level = self.set.trailing_zeros() as u8;
-            self.set.unset(level);
-            (v, level)
-        })
-    }
-
-    fn rev_iter(self) -> Self::RevIterator {
-        self
-    }
-}
-
-impl<T: Node> Iterator for LightStack<T> {
-    type Item = (T, u8);
-    fn next(&mut self) -> Option<Self::Item> {
-        self.pop()
-    }
 }
 
 #[repr(transparent)]
@@ -123,6 +82,8 @@ mod tests {
 
     use alloc::vec::Vec;
 
+    use crate::stack::LightStack;
+
     use super::*;
 
     #[derive(Clone, Default, PartialEq, Eq, Debug)]
@@ -138,23 +99,23 @@ mod tests {
         }
     }
 
-    pub struct DebugStack<T> {
-        vec: Vec<(T, u8)>,
+    pub struct DebugStack<T: Node> {
+        vec: LightStack<T>,
         usage: usize,
     }
 
-    impl<T> Stack for DebugStack<T> {
+    impl<T: Node> Stack for DebugStack<T> {
         type Node = T;
-        type RevIterator = Rev<<Vec<(T, u8)> as IntoIterator>::IntoIter>;
+        type RevIterator = LightStack<T>;
         fn with_capacity(capacity: usize) -> Self {
             Self {
-                vec: Vec::with_capacity(capacity),
+                vec: LightStack::with_capacity(capacity),
                 usage: 0,
             }
         }
         fn push(&mut self, value: (T, u8)) {
             self.vec.push(value);
-            self.usage = self.usage.max(self.vec.len());
+            self.usage = self.usage.max(self.vec.stack.len());
         }
         fn pop(&mut self) -> Option<(T, u8)> {
             self.vec.pop()
@@ -174,7 +135,7 @@ mod tests {
             // maximum usage should be equal to `capacity`.
             assert_eq!(new_state.0.usage, capacity);
             // the size of the final stack state should be a number of `1` bits in `n`.
-            assert_eq!(new_state.0.vec.len(), n.count_ones() as usize, "n: {n}");
+            assert_eq!(new_state.0.vec.stack.len(), n.count_ones() as usize, "n: {n}");
             new_state.collect().map(|v| v.0)
         };
         assert_eq!(f(0), None);

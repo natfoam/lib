@@ -1,9 +1,9 @@
 #![no_std]
 extern crate alloc;
 
-use alloc::vec::Vec;
 use build_tree_state::BuildTreeState;
 pub use node::Node;
+use stack::LightStack;
 
 mod build_tree_state;
 mod node;
@@ -31,7 +31,7 @@ where
 {
     type Node = T::Item;
     fn build_tree(self) -> Option<Self::Node> {
-        let state = BuildTreeState::<_, Vec<_>>::new(&self);
+        let state = BuildTreeState::<_, LightStack<_>>::new(&self);
         self.fold(state, BuildTreeState::fold_op).collect()
     }
 }
