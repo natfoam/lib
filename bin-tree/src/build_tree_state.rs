@@ -1,6 +1,6 @@
 use uints::Common;
 
-use crate::{node::Node, stack::Stack};
+use crate::{stack::Stack, Node};
 
 fn state_capacity(i: &impl Iterator) -> usize {
     let (min, max) = i.size_hint();
@@ -11,8 +11,8 @@ fn state_capacity(i: &impl Iterator) -> usize {
 #[repr(transparent)]
 pub struct BuildTreeState<S: Stack>(S);
 
-impl<T: Node, S: Stack<Node = T>> BuildTreeState<S> {
-    pub fn new(i: &impl Iterator<Item = T>) -> Self {
+impl<S: Stack> BuildTreeState<S> {
+    pub fn new(i: &impl Iterator<Item = S::Node>) -> Self {
         Self(S::with_capacity(state_capacity(i)))
     }
 
@@ -42,7 +42,7 @@ impl<T: Node, S: Stack<Node = T>> BuildTreeState<S> {
     // 3E => 5 [5,4,3,2,1]
     // 3F => 6 [5,4,3,2,1,0]
     // 40 => 6 [5,4,3,2,1,1],[5,4,3,2,2],[5,4,3,3],[5,4,4],[5,5],[6]
-    pub fn fold_op(mut self, mut right: T) -> Self {
+    pub fn fold_op(mut self, mut right: S::Node) -> Self {
         let mut right_level = 0;
         loop {
             match self.0.pop_if(right_level) {
@@ -57,7 +57,7 @@ impl<T: Node, S: Stack<Node = T>> BuildTreeState<S> {
         self
     }
 
-    pub fn collect(self) -> Option<T> {
+    pub fn collect(self) -> Option<S::Node> {
         self.0
             .rev_iter()
             .reduce(|(mut right, mut right_level), (left, left_level)| {
