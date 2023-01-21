@@ -1,20 +1,11 @@
-use uints::Common;
-
-use crate::{node::Node, stack::Stack};
-
-fn state_capacity(i: &impl Iterator) -> usize {
-    let (min, max) = i.size_hint();
-    let size = max.unwrap_or(min);
-    (size + 1).log2() as usize
-}
+use crate::{stack::Stack, Node};
 
 #[repr(transparent)]
-pub struct BuildTreeState<T: Node, S: Stack<Item = (T, usize)>>(S);
+pub struct BuildTreeState<S: Stack>(S);
 
-impl<T: Node, S: Stack<Item = (T, usize)>> BuildTreeState<T, S>
-{
-    pub fn new(i: &impl Iterator<Item = T>) -> Self {
-        Self(S::with_capacity(state_capacity(i)))
+impl<S: Stack> BuildTreeState<S> {
+    pub fn new(i: &impl Iterator<Item = S::Node>) -> Self {
+        Self(S::with_capacity(i))
     }
 
     // 00 => 0 []
@@ -43,18 +34,13 @@ impl<T: Node, S: Stack<Item = (T, usize)>> BuildTreeState<T, S>
     // 3E => 5 [5,4,3,2,1]
     // 3F => 6 [5,4,3,2,1,0]
     // 40 => 6 [5,4,3,2,1,1],[5,4,3,2,2],[5,4,3,3],[5,4,4],[5,5],[6]
-    pub fn fold_op(mut self, mut right: T) -> Self {
+    pub fn fold_op(mut self, mut right: S::Node) -> Self {
         let mut right_level = 0;
         loop {
-            match self.0.pop() {
+            match self.0.pop_if(right_level) {
                 Some(left) => {
-                    if left.1 == right_level {
-                        right = left.0.new_parent2(right);
-                        right_level += 1;
-                    } else {
-                        self.0.push(left);
-                        break;
-                    }
+                    right = left.new_parent2(right);
+                    right_level += 1;
                 }
                 _ => break,
             }
@@ -63,9 +49,8 @@ impl<T: Node, S: Stack<Item = (T, usize)>> BuildTreeState<T, S>
         self
     }
 
-    pub fn collect(self) -> Option<T> {
+    pub fn collect(self) -> Option<S::Node> {
         self.0
-            .rev_iter()
             .reduce(|(mut right, mut right_level), (left, left_level)| {
                 while left_level > right_level {
                     right = right.new_parent1();
@@ -79,9 +64,7 @@ impl<T: Node, S: Stack<Item = (T, usize)>> BuildTreeState<T, S>
 
 #[cfg(test)]
 mod tests {
-    use core::iter::Rev;
-
-    use alloc::vec::Vec;
+    use crate::VecStack;
 
     use super::*;
 
@@ -98,29 +81,32 @@ mod tests {
         }
     }
 
-    pub struct DebugStack<T> {
-        vec: Vec<T>,
-        usage: usize,
+    pub struct DebugStack<T: Node> {
+        vec: VecStack<T>,
+        max_len: usize,
     }
 
-    impl<T> Stack for DebugStack<T> {
-        type Item = T;
-        type RevIterator = Rev<<Vec<T> as IntoIterator>::IntoIter>;
-        fn with_capacity(capacity: usize) -> Self {
+    impl<T: Node> Stack for DebugStack<T> {
+        type Node = T;
+        fn with_capacity(i: &impl Iterator) -> Self {
             Self {
-                vec: Vec::with_capacity(capacity),
-                usage: 0,
+                vec: VecStack::with_capacity(i),
+                max_len: 0,
             }
         }
-        fn push(&mut self, value: T) {
+        fn push(&mut self, value: (T, u8)) {
             self.vec.push(value);
-            self.usage = self.usage.max(self.vec.len());
+            self.max_len = self.max_len.max(self.vec.stack.len());
         }
-        fn pop(&mut self) -> Option<T> {
-            self.vec.pop()
+        fn pop_if(&mut self, level: u8) -> Option<T> {
+            self.vec.pop_if(level)
         }
-        fn rev_iter(self) -> Self::RevIterator {
-            self.vec.rev_iter()
+    }
+
+    impl<T: Node> Iterator for DebugStack<T> {
+        type Item = (T, u8);
+        fn next(&mut self) -> Option<Self::Item> {
+            self.vec.next()
         }
     }
 
@@ -128,13 +114,19 @@ mod tests {
     fn sum() {
         let f = |n| -> Option<usize> {
             let i = (0..n).map(|v| Sum(v));
-            let capacity = state_capacity(&i);
-            let state = BuildTreeState::<_, DebugStack<_>>::new(&i);
+            let state = BuildTreeState::<DebugStack<_>>::new(&i);
+            let capacity = state.0.vec.stack.capacity();
             let new_state = i.fold(state, BuildTreeState::fold_op);
-            // maximum usage should be equal to `capacity`.
-            assert_eq!(new_state.0.usage, capacity);
+            // `max_len` should be equivalent to `capacity`.
+            assert_eq!(new_state.0.max_len, capacity);
+            // a `set` should be equivalent to `n` after fold.
+            assert_eq!(new_state.0.vec.set, n);
             // the size of the final stack state should be a number of `1` bits in `n`.
-            assert_eq!(new_state.0.vec.len(), n.count_ones() as usize, "n: {n}");
+            assert_eq!(
+                new_state.0.vec.stack.len(),
+                n.count_ones() as usize,
+                "n: {n}"
+            );
             new_state.collect().map(|v| v.0)
         };
         assert_eq!(f(0), None);
