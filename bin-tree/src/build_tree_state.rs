@@ -1,4 +1,5 @@
-use uints::Common;
+use alloc::vec::Vec;
+use uints::{Common, Number};
 
 use crate::{node::Node, stack::Stack};
 
@@ -8,11 +9,50 @@ fn state_capacity(i: &impl Iterator) -> usize {
     (size + 1).log2() as usize
 }
 
+struct LightStack<T: Node> {
+    stack: Vec<T>,
+    set: usize,
+}
+
+impl<T: Node> Stack for LightStack<T> {
+    type Node = T;
+    type RevIterator = Self;
+    fn with_capacity(capacity: usize) -> Self {
+        Self {
+            stack: Vec::with_capacity(capacity),
+            set: 0,
+        }
+    }
+
+    fn push(&mut self, value: (Self::Node, u8)) {
+        self.stack.push(value.0);
+        self.set.set(value.1);
+    }
+
+    fn pop(&mut self) -> Option<(Self::Node, u8)> {
+        self.stack.pop().map(|v| {
+            let level = self.set.trailing_zeros() as u8;
+            self.set.unset(level);
+            (v, level)
+        })
+    }
+
+    fn rev_iter(self) -> Self::RevIterator {
+        self
+    }
+}
+
+impl<T: Node> Iterator for LightStack<T> {
+    type Item = (T, u8);
+    fn next(&mut self) -> Option<Self::Item> {
+        self.pop()
+    }
+}
+
 #[repr(transparent)]
 pub struct BuildTreeState<T: Node, S: Stack<Node = T>>(S);
 
-impl<T: Node, S: Stack<Node = T>> BuildTreeState<T, S>
-{
+impl<T: Node, S: Stack<Node = T>> BuildTreeState<T, S> {
     pub fn new(i: &impl Iterator<Item = T>) -> Self {
         Self(S::with_capacity(state_capacity(i)))
     }
