@@ -8,7 +8,7 @@ iterator is empty.
 
 The `Node` trait represents a node in a binary tree. It provides two methods for creating a new parent node from child nodes:
 
-- `new_parent2(&self, right: &Self) -> Self`: creates a new parent node from two child nodes,
-- `new_parent1(&self) -> Self`: creates a new parent node from one child node.
+- `new_parent(self, right: Self) -> Self`: creates a new parent node from two child nodes,
+- `new_parent_from_one(self) -> Self`: creates a new parent node from one child node.
 
 The implementation of these methods is specific to the type of node being used, and should be provided by the user.

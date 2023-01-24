@@ -1,5 +1,5 @@
 use alloc::vec::Vec;
-use uints::{Number, Common};
+use uints::{Common, Number};
 
 use crate::{stack::Stack, Node};
 
