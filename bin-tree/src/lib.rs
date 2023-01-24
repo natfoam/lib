@@ -88,12 +88,12 @@ mod tests {
 
     #[test]
     fn node() {
-        let root = (0..10).map(leaf).build_tree().unwrap();
-        assert_eq!(45, root.value);
-        // [0..7],[8..9]
+        let root = (0..11).map(leaf).build_tree().unwrap();
+        assert_eq!(55, root.value);
+        // [0..7],[8..10]
         let (n0, n1) = root.children.unwrap();
         assert_eq!(28, n0.value);
-        assert_eq!(17, n1.value);
+        assert_eq!(27, n1.value);
         // [0..3],[4..7]
         {
             let (n00, n01) = n0.children.unwrap();
@@ -144,11 +144,20 @@ mod tests {
                 }
             }
         }
-        // [8],[9]
+        // [8..9],[10]
         {
             let (n10, n11) = n1.children.unwrap();
-            assert_eq!(8, n10.value);
-            assert_eq!(9, n11.value);
+            assert_eq!(17, n10.value);
+            assert_eq!(10, n11.value);
+            // [8],[9]
+            {
+                let (n100, n101) = n10.children.unwrap();
+                assert_eq!(8, n100.value);
+                assert_eq!(9, n101.value);
+                assert!(n100.children.is_none());
+                assert!(n101.children.is_none());
+            }
+            assert!(n11.children.is_none());
         }
     }
 }
