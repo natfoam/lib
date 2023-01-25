@@ -149,6 +149,7 @@ mod tests {
             let (n10, n11) = n1.children.unwrap();
             assert_eq!(17, n10.value);
             assert_eq!(10, n11.value);
+            assert!(n11.children.is_none());
             // [8],[9]
             {
                 let (n100, n101) = n10.children.unwrap();
@@ -157,7 +158,6 @@ mod tests {
                 assert!(n100.children.is_none());
                 assert!(n101.children.is_none());
             }
-            assert!(n11.children.is_none());
         }
     }
 }
