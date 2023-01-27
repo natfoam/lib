@@ -10,4 +10,4 @@ repository = "https://github.com/natfoam/lib"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-uints = { path = "../uints", version = "0.11.0" }
+uints = { path = "../uints", version = "0.11.1" }

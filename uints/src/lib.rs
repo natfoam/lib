@@ -1,5 +1,9 @@
 #![no_std]
 
+mod const_fn;
+
+pub use const_fn::*;
+
 use core::fmt::Debug;
 use core::ops::{
     Add, AddAssign, BitAnd, BitAndAssign, BitOr, BitOrAssign, BitXor, BitXorAssign, Div, DivAssign,
