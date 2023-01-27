@@ -21,6 +21,7 @@ pub trait Common: Default + PartialOrd + Debug {
     fn leading_zeros(&self) -> u8;
     fn trailing_zeros(&self) -> u8;
     fn count_ones(&self) -> u8;
+    #[inline]
     fn log2(&self) -> u8 {
         Self::BITS - 1 - self.leading_zeros()
     }

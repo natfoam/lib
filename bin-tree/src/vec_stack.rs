@@ -27,8 +27,9 @@ impl<T: Node> Stack for VecStack<T> {
 
     fn pop_if(&mut self, level: u8) -> Option<Self::Node> {
         let Self { stack, set } = self;
-        if is_set(*set, level) {
-            set.unset(level);
+        let s = *set;
+        if is_set(s, level) {
+            *set = unset(s, level);
             stack.pop()
         } else {
             None
@@ -41,8 +42,9 @@ impl<T: Node> Iterator for VecStack<T> {
     fn next(&mut self) -> Option<Self::Item> {
         let VecStack { stack, set } = self;
         stack.pop().map(|v| {
-            let level = set.trailing_zeros() as u8;
-            set.unset(level);
+            let s = *set;
+            let level = s.trailing_zeros() as u8;
+            *set = unset(s, level);
             (v, level)
         })
     }
