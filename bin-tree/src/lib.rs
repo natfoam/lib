@@ -10,7 +10,7 @@
 //!
 //! impl Node for NodeStr {
 //!     fn new_parent(self, right: Self) -> Self {
-//!         Self("[".to_owned() + &self.0 + &right.0 + "]")
+//!         Self("[".to_owned() + &self.0 + ", " + &right.0 + "]")
 //!     }
 //!     fn new_parent_from_single(self) -> Self {
 //!         self
@@ -18,7 +18,7 @@
 //! }
 //!
 //! let x = (0..10).map(|v| NodeStr(v.to_string())).build_tree();
-//! assert_eq!(x, Some(NodeStr("[[[[01][23]][[45][67]]][89]]".to_string())));
+//! assert_eq!(x, Some(NodeStr("[[[[0, 1], [2, 3]], [[4, 5], [6, 7]]], [8, 9]]".to_string())));
 //! ```
 
 #![no_std]
