@@ -1,6 +1,6 @@
 [package]
 name = "uints"
-version = "0.11.0"
+version = "0.11.1"
 authors = ["natfoam"]
 edition = "2021"
 description = "Unsigned Integer Properties"

@@ -1,5 +1,5 @@
 use alloc::vec::Vec;
-use uints::{Number, Common};
+use uints::{Number, log2, is_set, unset};
 
 use crate::{stack::Stack, Node};
 
@@ -13,7 +13,7 @@ impl<T: Node> Stack for VecStack<T> {
     fn with_capacity(i: &impl Iterator) -> Self {
         let (min, max) = i.size_hint();
         let size = max.unwrap_or(min);
-        let capacity = (size + 1).log2() as usize;
+        let capacity = log2(size + 1) as usize;
         Self {
             stack: Vec::with_capacity(capacity),
             set: 0,
@@ -27,9 +27,9 @@ impl<T: Node> Stack for VecStack<T> {
 
     fn pop_if(&mut self, level: u8) -> Option<Self::Node> {
         let Self { stack, set } = self;
-        let left_level = set.trailing_zeros() as u8;
-        if left_level == level {
-            set.unset(level);
+        let s = *set;
+        if is_set(s, level) {
+            *set = unset(s, level);
             stack.pop()
         } else {
             None
@@ -42,8 +42,9 @@ impl<T: Node> Iterator for VecStack<T> {
     fn next(&mut self) -> Option<Self::Item> {
         let VecStack { stack, set } = self;
         stack.pop().map(|v| {
-            let level = set.trailing_zeros() as u8;
-            set.unset(level);
+            let s = *set;
+            let level = s.trailing_zeros() as u8;
+            *set = unset(s, level);
             (v, level)
         })
     }

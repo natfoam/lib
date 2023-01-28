@@ -25,3 +25,5 @@ jobs:
       run: cargo build --verbose --release
     - name: Run tests
       run: cargo test --verbose --release
+    - name: Run Doc tests
+      run: cargo test --doc --verbose --release

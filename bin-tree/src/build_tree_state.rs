@@ -39,7 +39,7 @@ impl<S: Stack> BuildTreeState<S> {
         loop {
             match self.0.pop_if(right_level) {
                 Some(left) => {
-                    right = left.new_parent2(right);
+                    right = left.new_parent(right);
                     right_level += 1;
                 }
                 _ => break,
@@ -53,10 +53,10 @@ impl<S: Stack> BuildTreeState<S> {
         self.0
             .reduce(|(mut right, mut right_level), (left, left_level)| {
                 while left_level > right_level {
-                    right = right.new_parent1();
+                    right = right.new_parent_from_single();
                     right_level += 1;
                 }
-                (left.new_parent2(right), right_level + 1)
+                (left.new_parent(right), right_level + 1)
             })
             .map(|(v, _)| v)
     }
@@ -72,11 +72,11 @@ mod tests {
     struct Sum(usize);
 
     impl Node for Sum {
-        fn new_parent2(self, right: Self) -> Self {
+        fn new_parent(self, right: Self) -> Self {
             Sum(self.0 + right.0)
         }
 
-        fn new_parent1(self) -> Self {
+        fn new_parent_from_single(self) -> Self {
             self
         }
     }
@@ -119,7 +119,7 @@ mod tests {
             let new_state = i.fold(state, BuildTreeState::fold_op);
             // `max_len` should be equivalent to `capacity`.
             assert_eq!(new_state.0.max_len, capacity);
-            // a `set` should be equivalent to `n` after fold.
+            // a `set` should be equivalent to `n`.
             assert_eq!(new_state.0.vec.set, n);
             // the size of the final stack state should be a number of `1` bits in `n`.
             assert_eq!(
