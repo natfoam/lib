@@ -1,3 +1,2 @@
-# rustup update default stable
-cargo doc
+cargo doc --no-deps
 cp ./.doc/index.html ./target/doc/
