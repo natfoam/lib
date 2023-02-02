@@ -1,6 +1,6 @@
 # lib
 
-[![Netlify Status](https://api.netlify.com/api/v1/badges/fb9af04c-2f5c-43ed-8d46-88b7e298a4e9/deploy-status)](https://app.netlify.com/sites/natfoam-lib/deploys)
+Documentation: [![Netlify Status](https://api.netlify.com/api/v1/badges/fb9af04c-2f5c-43ed-8d46-88b7e298a4e9/deploy-status)](https://app.netlify.com/sites/natfoam-lib/deploys)
 
 Rust libraries:
 
