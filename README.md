@@ -4,7 +4,7 @@
 
 Documentation:
 - on [Cloudflare](https://natfoam-lib.pages.dev),
-- on [Netlify](https://natfoam-lib.netlify.app)
+- on [Netlify](https://natfoam-lib.netlify.app).
 
 Rust libraries:
 
