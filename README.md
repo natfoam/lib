@@ -1,6 +1,8 @@
 # lib
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/fb9af04c-2f5c-43ed-8d46-88b7e298a4e9/deploy-status)](https://app.netlify.com/sites/natfoam-lib/deploys)
+[![CircleCI](https://dl.circleci.com/status-badge/img/gh/natfoam/lib/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/natfoam/lib/tree/main)
+
 
 Documentation:
 - on [Cloudflare](https://natfoam-lib.pages.dev),
