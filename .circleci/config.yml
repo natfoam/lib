@@ -20,13 +20,13 @@ jobs:
           command: "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y"
       - run:
           name: "build"
-          command: "cargo build --release"
+          command: "cargo build --release --verbose"
       - run:
           name: "test"
-          command: "cargo test --release"
+          command: "cargo test --release --verbose"
       - run:
           name: "test doc"
-          command: "cargo test --doc --release"          
+          command: "cargo test --doc --release --verbose"          
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
