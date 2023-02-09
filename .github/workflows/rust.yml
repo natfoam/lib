@@ -27,3 +27,7 @@ jobs:
       run: cargo test --verbose --release
     - name: Run Doc tests
       run: cargo test --doc --verbose --release
+    - name: fmt
+      run: cargo fmt
+    - name: Upload coverage reports to Codecov
+      uses: codecov/codecov-action@v3
