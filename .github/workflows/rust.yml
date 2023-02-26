@@ -13,11 +13,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+    - run: rustup target add wasm32-unknown-unknown
     - uses: actions/checkout@v2
-    - name: Run tests
-      run: cargo test --verbose --release
-    - name: Archive Cargo.lock
-      uses: actions/upload-artifact@v3
+    - run: cargo build --verbose --release --target wasm32-unknown-unknown
+    - uses: actions/upload-artifact@v3
       with:
         name: Cargo.lock
         path: Cargo.lock
@@ -30,10 +29,4 @@ jobs:
         os: [windows-latest, ubuntu-latest, macos-latest]
     steps:
     - uses: actions/checkout@v2
-  build-webasm:
-    runs-on: ubuntu-latest
-    steps:
-    - run: rustup target add wasm32-unknown-unknown
-    - uses: actions/checkout@v2
-    - name: Build
-      run: cargo build --verbose --release --target wasm32-unknown-unknown
+    - run: cargo test --verbose --release
