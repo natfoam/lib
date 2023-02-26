@@ -18,7 +18,7 @@ jobs:
     - run: cargo build --verbose --release --target wasm32-unknown-unknown
     - uses: actions/upload-artifact@v3
       with:
-        # name: Cargo.lock
+        name: Cargo.lock
         path: Cargo.lock
   test:
     needs: build
