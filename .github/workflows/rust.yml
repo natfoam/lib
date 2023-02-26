@@ -10,23 +10,26 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  test:
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      matrix:
-        # https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idruns-on
-        os: [windows-latest, ubuntu-latest, macos-latest]
-
-    steps:
-    - uses: actions/checkout@v2
-    - name: Run tests
-      run: cargo test --verbose --release
-
-  build-webasm:
+  build:
     runs-on: ubuntu-latest
     steps:
     - run: rustup target add wasm32-unknown-unknown
     - uses: actions/checkout@v2
-    - name: Build
-      run: cargo build --verbose --release --target wasm32-unknown-unknown
+    - run: cargo build --verbose --release --target wasm32-unknown-unknown
+    - uses: actions/upload-artifact@v3
+      with:
+        name: Cargo.lock
+        path: Cargo.lock
+  test:
+    needs: build
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        # https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idruns-on
+        os: [windows-latest, ubuntu-latest, macos-latest]
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/download-artifact@v3
+      with:
+        name: Cargo.lock
+    - run: cargo test --verbose --release --locked
