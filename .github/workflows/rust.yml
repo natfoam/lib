@@ -22,6 +22,7 @@ jobs:
         name: Cargo.lock
         path: Cargo.lock
   test:
+    needs: build
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
