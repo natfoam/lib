@@ -5,8 +5,9 @@
 
 
 Documentation:
-- on [Cloudflare](https://natfoam-lib.pages.dev),
-- on [Netlify](https://natfoam-lib.netlify.app).
+- on [Cloudflare](https://natfoam-lib.pages.dev/bin_tree),
+- on [Netlify](https://natfoam-lib.netlify.app/bin_tree),
+- on [GitHub Pages](https://natfoam.com/lib/bin_tree).
 
 Rust libraries:
 
