@@ -10,7 +10,7 @@ Compare to other tools
 ## Installation
 
 ```
-cargo intall publish-ws
+cargo install publish-ws
 ```
 
 ## Usage
