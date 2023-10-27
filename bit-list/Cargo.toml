@@ -10,6 +10,6 @@ repository.workspace = true
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-uints = { path = "../uints", version = "0.11.1" }
-list-fn = { path = "../list-fn", version = "0.20.0" }
-lim-bit-vec = { path = "../lim-bit-vec", version = "0.8.1" }
+uints = { path = "../uints", version = "0.11.2" }
+list-fn = { path = "../list-fn", version = "0.20.1" }
+lim-bit-vec = { path = "../lim-bit-vec", version = "0.8.2" }

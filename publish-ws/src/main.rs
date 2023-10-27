@@ -4,7 +4,7 @@ use serde::{
 };
 use serde_derive::Deserialize;
 use std::{collections::HashMap, fmt, fmt::Formatter, fs::read_to_string, process::Command};
-use toml::from_str;
+use toml::{from_str, Value};
 
 const SLASH: &str = if cfg!(windows) { "\\" } else { "/" };
 
@@ -41,9 +41,15 @@ impl<'de> Deserialize<'de> for Dependency {
                 V: MapAccess<'de>,
             {
                 let mut result = None;
-                while let Some((key, value)) = visitor.next_entry::<String, String>()? {
-                    if key == "version" {
-                        result = Some(value);
+                while let Some((key, value)) = visitor.next_entry::<String, Value>()? {
+                    match key.as_str() {
+                        "version" => {
+                            result = Some(value.to_string());
+                        }
+                        "workspace" => {
+                            result = Some("workspace".to_string());
+                        }
+                        _ => {}
                     }
                 }
                 Ok(Dependency(result.unwrap()))

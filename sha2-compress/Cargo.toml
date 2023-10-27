@@ -10,5 +10,5 @@ repository.workspace = true
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-uints = { path = "../uints", version = "0.11.1" }
-fixed-array = { path = "../fixed-array", version = "0.4.0" }
+uints = { path = "../uints", version = "0.11.2" }
+fixed-array = { path = "../fixed-array", version = "0.4.1" }

@@ -12,6 +12,7 @@ members = [
     "yagen",
     "bin-tree",
 ]
+resolver = "2"
 
 [workspace.dependencies]
 toml = "0.8.6"
