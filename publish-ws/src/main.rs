@@ -44,7 +44,7 @@ impl<'de> Deserialize<'de> for Dependency {
                 while let Some((key, value)) = visitor.next_entry::<String, Value>()? {
                     match key.as_str() {
                         "version" => {
-                            result = Some(value.to_string());
+                            result = Some(value.as_str().unwrap().to_string());
                         }
                         "workspace" => {
                             result = Some("workspace".to_string());
@@ -92,6 +92,8 @@ fn main() {
         for (d_name, d_version) in cargo_toml.dependencies.iter() {
             if let Some(p) = map.get(d_name) {
                 if p.package.version != d_version.0 {
+                    eprintln!("p: {:?}", p.package.version.as_bytes());
+                    eprintln!("p: {:?}", d_version.0.as_bytes());
                     eprintln!(
                         "Version mismatch: {}.{} = {}, {} = {}",
                         name, d_name, d_version.0, d_name, p.package.version
