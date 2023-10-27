@@ -12,3 +12,15 @@ members = [
     "yagen",
     "bin-tree",
 ]
+
+[workspace.dependencies]
+toml = "0.8.6"
+serde = "1.0.190"
+serde_derive = "1.0.190"
+take_mut = "0.2.2"
+
+[workspace.package]
+edition = "2021"
+authors = ["natfoam"]
+license = "Apache-2.0"
+repository = "https://github.com/natfoam/lib"

@@ -1,11 +1,11 @@
 [package]
 name = "bit-list"
-version = "0.28.1"
-authors = ["natfoam"]
-edition = "2021"
+version = "0.28.2"
 description = "A lazy list of bits"
-license = "Apache-2.0"
-repository = "https://github.com/natfoam/lib"
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

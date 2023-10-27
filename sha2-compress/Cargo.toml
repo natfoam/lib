@@ -1,11 +1,11 @@
 [package]
 name = "sha2-compress"
-version = "0.7.1"
-authors = ["natfoam"]
-edition = "2021"
+version = "0.7.2"
 description = "SHA2 compress function"
-license = "Apache-2.0"
-repository = "https://github.com/natfoam/lib"
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

@@ -1,13 +1,13 @@
 [package]
 name = "list-fn"
-version = "0.20.0"
-authors = ["natfoam"]
-edition = "2021"
+version = "0.20.1"
 description = "A generic lazy list"
-license = "Apache-2.0"
-repository = "https://github.com/natfoam/lib"
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-take_mut = "0.2.2"
+take_mut.workspace = true

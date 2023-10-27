@@ -1,11 +1,11 @@
 [package]
 name = "fixed-array"
-version = "0.4.0"
-authors = ["natfoam"]
-edition = "2021"
+version = "0.4.1"
 description = "Fixed-size array"
-license = "Apache-2.0"
-repository = "https://github.com/natfoam/lib"
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

@@ -1,15 +1,15 @@
 [package]
 name = "publish-ws"
-version = "0.1.10"
-authors = ["natfoam"]
-edition = "2021"
+version = "0.1.11"
 description = "Publish Workspace Packages"
-license = "Apache-2.0"
-repository = "https://github.com/natfoam/lib"
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-toml = "0.5.10"
-serde = "1.0.152"
-serde_derive = "1.0.152"
+toml.workspace = true
+serde.workspace = true
+serde_derive.workspace = true
